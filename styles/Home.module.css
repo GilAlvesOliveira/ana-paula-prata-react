@@ -9,6 +9,7 @@
   font-family: 'Arial', sans-serif;
   background-color: #000;
   color: #fff;
+  padding: 10px;
 }
 
 .main {
@@ -43,6 +44,61 @@
   background-color: #bbb;
 }
 
+/* Estilos para as imagens */
+.imageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Espaçamento entre as imagens */
+  margin-top: 50px;
+  flex-wrap: wrap; /* Permite que as imagens se ajustem no modo mobile */
+}
+
+.imageWrapper {
+  position: relative; /* Necessário para posicionar o texto sobre a imagem */
+}
+
+.sideImage {
+  width: 150px;
+  height: auto;
+  transition: transform 0.3s ease, width 0.3s ease; /* Transição suave */
+  cursor: pointer;
+  border: 2px solid #ccc;
+  border-radius: 10px; /* Bordas arredondadas nas imagens laterais */
+}
+
+.sideImage:hover {
+  transform: scale(1.1); /* Aumenta a imagem lateral ao passar o mouse */
+}
+
+.centerImage {
+  width: 300px;
+  height: auto;
+  transition: transform 0.3s ease, width 0.3s ease;
+  cursor: pointer;
+  border: 2px solid #ccc;
+  border-radius: 10px; /* Bordas arredondadas na imagem central */
+}
+
+.centerImage:hover {
+  transform: scale(1.1); /* Aumenta a imagem central ao passar o mouse */
+}
+
+/* Estilo do texto sobre as imagens */
+.imageText {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.6); /* Fundo semi-transparente para o texto */
+  padding: 5px 10px;
+  border-radius: 5px; /* Bordas arredondadas no fundo do texto */
+}
+
+/* Footer */
 .footer {
   display: flex;
   justify-content: center;
@@ -56,15 +112,57 @@
   margin: 0;
 }
 
-/* Estilos do Header */
-.header {
-  display: flex;
-  justify-content: center;
-  margin-top: 30px;
+/* Media Queries para Mobile */
+@media (max-width: 768px) {
+  .title {
+    font-size: 2.5rem; /* Reduz o tamanho do título em telas pequenas */
+  }
+
+  .description {
+    font-size: 1.25rem; /* Reduz o tamanho da descrição */
+  }
+
+  .imageContainer {
+    flex-direction: column; /* Alinha as imagens verticalmente em telas pequenas */
+    gap: 15px; /* Diminui o espaçamento entre as imagens */
+  }
+
+  .sideImage {
+    width: 120px; /* Reduz o tamanho das imagens laterais */
+  }
+
+  .centerImage {
+    width: 250px; /* Reduz o tamanho da imagem central */
+  }
+
+  .imageText {
+    font-size: 1rem; /* Reduz o tamanho do texto sobre as imagens */
+    padding: 3px 8px;
+  }
 }
 
-.logo {
-  width: 150px;
-  height: auto;
-  border-radius: 50%;
+@media (max-width: 480px) {
+  .title {
+    font-size: 2rem; /* Ajusta ainda mais o tamanho do título para telas muito pequenas */
+  }
+
+  .description {
+    font-size: 1rem; /* Ajusta o tamanho da descrição para telas pequenas */
+  }
+
+  .imageContainer {
+    gap: 10px; /* Diminui ainda mais o espaçamento */
+  }
+
+  .sideImage {
+    width: 100px; /* Reduz ainda mais as imagens laterais */
+  }
+
+  .centerImage {
+    width: 200px; /* Reduz ainda mais a imagem central */
+  }
+
+  .imageText {
+    font-size: 0.9rem; /* Ajusta o tamanho do texto sobre as imagens */
+  }
 }
