@@ -1,0 +1,15 @@
+/* Header.module.css */
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #000; /* Fundo preto */
+}
+
+.logo {
+  width: 300px; /* Aumenta o tamanho do logo */
+  height: auto;
+}
