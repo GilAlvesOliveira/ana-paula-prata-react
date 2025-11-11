@@ -34,12 +34,14 @@ const Home = () => {
       <Header />
 
       {/* Div com Diamante, Título e Descrição */}
+        
       <div className={styles.content}>
-        <h1 className={styles.title}>JOIAS DE PRATA</h1>
-
         <div className={styles.diamanteContainer}>
           <img src="/imagens/diamante.png" alt="Diamante" className={styles.diamante} />
         </div>
+        
+        <h1 className={styles.title}>JOIAS DE PRATA</h1>
+
 
         <div className={styles.description}>
           Descubra a beleza atemporal das nossas joias de prata 925, perfeitas para adicionar um toque de elegância ao seu dia a dia.
