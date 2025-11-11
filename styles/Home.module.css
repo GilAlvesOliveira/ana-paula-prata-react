@@ -5,9 +5,62 @@
   align-items: center;
   justify-content: flex-start; /* Garante que o conteúdo comece imediatamente após o header */
   padding: 0 20px; /* Padding lateral para não colar os elementos nas bordas */
-  background-color: rgb(248, 248, 248); /* Fundo prateado para a área abaixo do header */
+  background-color: rgb(73, 73, 73); /* Fundo prateado para a área abaixo do header */
   height: 150px; /* Altura fixa para a área de conteúdo */
   margin-top: 0; /* Remove margem superior */
+}
+
+/* Estilo do carousel de imagens */
+.carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30px;
+  position: relative; /* Necessário para centralizar as setas nas imagens */
+}
+
+/* Estilo para o container de imagens lado a lado */
+.carouselImages {
+  display: flex;
+  justify-content: space-between; /* Distribui as imagens lado a lado */
+  align-items: center;
+  width: 100%; /* Garante que o container ocupe toda a largura */
+  margin: 0 10px;
+  overflow: hidden; /* Impede que as imagens ultrapassem o container */
+}
+
+/* Estilo das imagens no carousel */
+.carouselImg {
+  width: 170px; /* Define o tamanho fixo da imagem */
+  height: 170px; /* Mantém o tamanho das imagens quadradas */
+  border-radius: 10px; /* Bordas arredondadas para a imagem */
+  object-fit: cover; /* Faz com que a imagem ocupe completamente o espaço disponível sem distorcer */
+  margin: 0; /* Remove o espaço entre as imagens */
+}
+
+/* Estilo para os botões de setas */
+.arrowButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute; /* Necessário para centralizar as setas nas imagens */
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 10px;
+}
+
+.arrow {
+  width: 40px; /* Tamanho das setas */
+  height: 40px;
+}
+
+/* Setas à esquerda e à direita */
+.arrowButton:first-of-type {
+  left: 0;
+}
+
+.arrowButton:last-of-type {
+  right: 0;
 }
 
 /* Estilo do container da imagem do diamante */
@@ -107,5 +160,45 @@
 
   .categoriesDescription {
     font-size: 14px; /* Ajusta o tamanho da frase da categoria em telas menores */
+  }
+
+  /* Ajusta o tamanho do diamante em telas menores */
+  .diamante {
+    width: 24px; 
+  }
+
+  .description {
+    width: 90%; /* Ajusta a largura da descrição em telas menores */
+    font-size: 12px; /* Diminui o tamanho da fonte */
+  }
+
+  .title {
+    font-size: 24px; /* Ajusta o tamanho do título em telas menores */
+  }
+
+  .categoriesTitle {
+    font-size: 20px; /* Ajusta o tamanho do título da categoria em telas menores */
+  }
+
+  .categoriesDescription {
+    font-size: 14px; /* Ajusta o tamanho da frase da categoria em telas menores */
+  }
+
+  /* Ajustes no layout do carousel em telas menores */
+  .carousel {
+    flex-direction: column; /* Empilha as setas e as imagens na vertical */
+  }
+
+  .carouselImages {
+    flex-direction: column; /* Alinha as imagens na vertical */
+  }
+
+  .carouselImg {
+    width: 80%; /* Ajusta o tamanho da imagem em telas menores */
+  }
+
+  .arrow {
+    width: 30px; /* Ajusta o tamanho das setas em telas menores */
+    height: 30px;
   }
 }
