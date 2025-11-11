@@ -1,58 +1,42 @@
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import styles from '../styles/Home.module.css'
-import { useState } from 'react'
+import React from 'react';
+import Header from '../components/Header'; // Supondo que Header.js esteja na pasta 'components'
+import styles from '../styles/Home.module.css'; // Caminho correto para o arquivo CSS
 
-export default function Home() {
-  const [centerImage, setCenterImage] = useState('roupas.jpeg'); // Estado para a imagem central
-
-  const handleClick = (imageName) => {
-    setCenterImage(imageName); // Muda a imagem central ao clicar
-  }
-
+const Home = () => {
   return (
     <div className={styles.container}>
+      {/* Componente Header */}
       <Header />
-      <main className={styles.main}>
-        <h1 className={styles.title}>Bem-vindo à nossa loja</h1>
-        <p className={styles.description}>
-          Encontre as joias de prata mais exclusivas e elegantes para você.
-        </p>
-      </main>
 
-      <div className={styles.imageContainer}>
-        <div className={styles.imageWrapper}>
-          <img
-            src="/imagens/roupas.jpeg"
-            alt="Roupas"
-            className={centerImage === 'roupas.jpeg' ? styles.centerImage : styles.sideImage}
-            onClick={() => handleClick('roupas.jpeg')}
-          />
-          <div className={styles.imageText}>Roupas</div>
+      {/* Div com Diamante, Título e Descrição, com fundo prateado */}
+      <div className={styles.content}>
+
+        {/* Imagem do Diamante */}
+        <div className={styles.diamanteContainer}>
+          <img src="/imagens/diamante.png" alt="Diamante" className={styles.diamante} />
         </div>
         
-        <div className={styles.imageWrapper}>
-          <img
-            src="/imagens/prata.jpeg"
-            alt="Prata"
-            className={centerImage === 'prata.jpeg' ? styles.centerImage : styles.sideImage}
-            onClick={() => handleClick('prata.jpeg')}
-          />
-          <div className={styles.imageText}>Joias</div>
-        </div>
-        
-        <div className={styles.imageWrapper}>
-          <img
-            src="/imagens/roupas_joias.jpeg"
-            alt="Roupas + Joias"
-            className={centerImage === 'roupas_joias.jpeg' ? styles.centerImage : styles.sideImage}
-            onClick={() => handleClick('roupas_joias.jpeg')}
-          />
-          <div className={styles.imageText}>Roupas + Joias</div>
+        {/* Título */}
+        <h1 className={styles.title}>JOIAS DE PRATA</h1>
+
+        {/* Texto de descrição */}
+        <div className={styles.description}>
+          Descubra a beleza atemporal das nossas joias de prata 925, perfeitas para adicionar um toque de elegância ao seu dia a dia.
         </div>
       </div>
 
-      <Footer />
+      {/* Nova seção: NAVEGUE POR CATEGORIAS */}
+      <div className={styles.categoriesSection}>
+        <h2 className={styles.categoriesTitle}>NAVEGUE POR CATEGORIAS</h2>
+        <p className={styles.categoriesDescription}>Encontre a sua próxima joia de prata</p>
+      </div>
+
+      {/* Área abaixo com fundo preto */}
+      <div className={styles.blackBackground}>
+        {/* Aqui você pode adicionar mais conteúdo, se necessário */}
+      </div>
     </div>
-  )
-}
+  );
+};
+
+export default Home;

@@ -1,168 +1,111 @@
-/* Home.module.css */
+/* Estilo do conteúdo principal abaixo do Header */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Garante que o conteúdo comece imediatamente após o header */
+  padding: 0 20px; /* Padding lateral para não colar os elementos nas bordas */
+  background-color: rgb(248, 248, 248); /* Fundo prateado para a área abaixo do header */
+  height: 150px; /* Altura fixa para a área de conteúdo */
+  margin-top: 0; /* Remove margem superior */
+}
 
-.container {
-  min-height: 100vh;
+/* Estilo do container da imagem do diamante */
+.diamanteContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px; /* Aumenta o espaço entre o header e a imagem do diamante */
+  padding: 0; /* Remove qualquer padding */
+}
+
+/* Estilo da imagem do diamante */
+.diamante {
+  width: 32px; /* Tamanho da imagem do diamante, igual ao tamanho da fonte do título */
+  height: auto;
+  margin-bottom: 5px; /* Espaçamento entre a imagem e o título */
+}
+
+/* Estilo do título "JOIAS DE PRATA" */
+.title {
+  font-size: 28px; /* Tamanho reduzido do título */
+  font-weight: bold;
+  color: rgb(169, 169, 169); /* Cor prata para o título */
+  margin-bottom: 3px; /* Reduz o espaço entre o título e a frase */
+}
+
+/* Estilo da frase de descrição */
+.description {
+  font-size: 14px; /* Tamanho reduzido da frase */
+  color: rgb(169, 169, 169); /* Cor prata para o texto da frase */
+  font-weight: 400; /* Peso normal da fonte */
+  text-align: center; /* Centraliza o texto */
+  width: 80%; /* Largura ajustada para manter o texto dentro da tela */
+  margin-top: 0; /* Remove qualquer margem superior */
+  padding: 0; /* Remove padding */
+  line-height: 1.5; /* Ajusta a altura da linha para tornar o texto mais legível */
+}
+
+/* Estilo da nova seção "NAVEGUE POR CATEGORIAS" com fundo preto */
+.categoriesSection {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-family: 'Arial', sans-serif;
-  background-color: #000;
-  color: #fff;
-  padding: 10px;
-}
-
-.main {
-  text-align: center;
-  padding: 2rem;
-}
-
-.title {
-  font-size: 3rem;
-  color: #ccc;
-  font-weight: bold;
-}
-
-.description {
-  font-size: 1.5rem;
-  color: #aaa;
-  margin-top: 20px;
-}
-
-.shopButton {
-  background-color: #ccc;
-  color: #000;
-  padding: 1rem 2rem;
-  font-size: 1.25rem;
-  border: none;
-  cursor: pointer;
-  margin-top: 30px;
-  transition: background-color 0.3s;
-}
-
-.shopButton:hover {
-  background-color: #bbb;
-}
-
-/* Estilos para as imagens */
-.imageContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px; /* Espaçamento entre as imagens */
-  margin-top: 50px;
-  flex-wrap: wrap; /* Permite que as imagens se ajustem no modo mobile */
-}
-
-.imageWrapper {
-  position: relative; /* Necessário para posicionar o texto sobre a imagem */
-}
-
-.sideImage {
-  width: 150px;
-  height: auto;
-  transition: transform 0.3s ease, width 0.3s ease; /* Transição suave */
-  cursor: pointer;
-  border: 2px solid #ccc;
-  border-radius: 10px; /* Bordas arredondadas nas imagens laterais */
-}
-
-.sideImage:hover {
-  transform: scale(1.1); /* Aumenta a imagem lateral ao passar o mouse */
-}
-
-.centerImage {
-  width: 300px;
-  height: auto;
-  transition: transform 0.3s ease, width 0.3s ease;
-  cursor: pointer;
-  border: 2px solid #ccc;
-  border-radius: 10px; /* Bordas arredondadas na imagem central */
-}
-
-.centerImage:hover {
-  transform: scale(1.1); /* Aumenta a imagem central ao passar o mouse */
-}
-
-/* Estilo do texto sobre as imagens */
-.imageText {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.6); /* Fundo semi-transparente para o texto */
-  padding: 5px 10px;
-  border-radius: 5px; /* Bordas arredondadas no fundo do texto */
-}
-
-/* Footer */
-.footer {
-  display: flex;
-  justify-content: center;
-  padding: 1rem;
-  background-color: #222;
-  color: #fff;
+  padding: 30px 20px;
+  background-color: #000; /* Fundo preto para a seção */
   width: 100%;
+  margin-top: 0; /* Remove qualquer margem superior para colar com a descrição */
 }
 
-.footer p {
-  margin: 0;
+/* Estilo do título "NAVEGUE POR CATEGORIAS" */
+.categoriesTitle {
+  font-size: 24px; /* Tamanho do título */
+  font-weight: bold;
+  color: rgb(169, 169, 169); /* Cor prata para o título */
+  margin-bottom: 15px; /* Espaçamento entre o título e a frase */
+  text-align: center;
 }
 
-/* Media Queries para Mobile */
+/* Estilo da frase abaixo do título */
+.categoriesDescription {
+  font-size: 16px; /* Tamanho reduzido da frase */
+  color: rgb(169, 169, 169); /* Cor prata para o texto da frase */
+  font-weight: 400; /* Peso normal da fonte */
+  text-align: center; /* Centraliza o texto */
+  width: 80%; /* Largura ajustada para manter o texto dentro da tela */
+  line-height: 1.5; /* Ajusta a altura da linha para tornar o texto mais legível */
+}
+
+/* Novo fundo preto para a área abaixo do conteúdo */
+.blackBackground {
+  background-color: #000; /* Fundo preto para a área abaixo do conteúdo principal */
+  height: 100vh; /* A altura será 100% da tela */
+  width: 100%; /* Ocupa toda a largura da tela */
+}
+
+/* Responsividade para dispositivos móveis */
 @media (max-width: 768px) {
-  .title {
-    font-size: 2.5rem; /* Reduz o tamanho do título em telas pequenas */
+  /* Ajusta o tamanho do diamante em telas menores */
+  .diamante {
+    width: 24px; 
   }
 
   .description {
-    font-size: 1.25rem; /* Reduz o tamanho da descrição */
+    width: 90%; /* Ajusta a largura da descrição em telas menores */
+    font-size: 12px; /* Diminui o tamanho da fonte */
   }
 
-  .imageContainer {
-    flex-direction: column; /* Alinha as imagens verticalmente em telas pequenas */
-    gap: 15px; /* Diminui o espaçamento entre as imagens */
-  }
-
-  .sideImage {
-    width: 120px; /* Reduz o tamanho das imagens laterais */
-  }
-
-  .centerImage {
-    width: 250px; /* Reduz o tamanho da imagem central */
-  }
-
-  .imageText {
-    font-size: 1rem; /* Reduz o tamanho do texto sobre as imagens */
-    padding: 3px 8px;
-  }
-}
-
-@media (max-width: 480px) {
   .title {
-    font-size: 2rem; /* Ajusta ainda mais o tamanho do título para telas muito pequenas */
+    font-size: 24px; /* Ajusta o tamanho do título em telas menores */
   }
 
-  .description {
-    font-size: 1rem; /* Ajusta o tamanho da descrição para telas pequenas */
+  .categoriesTitle {
+    font-size: 20px; /* Ajusta o tamanho do título da categoria em telas menores */
   }
 
-  .imageContainer {
-    gap: 10px; /* Diminui ainda mais o espaçamento */
-  }
-
-  .sideImage {
-    width: 100px; /* Reduz ainda mais as imagens laterais */
-  }
-
-  .centerImage {
-    width: 200px; /* Reduz ainda mais a imagem central */
-  }
-
-  .imageText {
-    font-size: 0.9rem; /* Ajusta o tamanho do texto sobre as imagens */
+  .categoriesDescription {
+    font-size: 14px; /* Ajusta o tamanho da frase da categoria em telas menores */
   }
 }

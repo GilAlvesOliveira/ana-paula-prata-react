@@ -1,15 +1,128 @@
-/* Header.module.css */
-
+/* Estilo do header */
 .header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 30px;
-  padding: 20px;
   background-color: #000; /* Fundo preto */
+  color: #fff; /* Texto prata */
+  width: 100%; /* Ocupa toda a largura da tela */
+  height: 95px; /* Definir altura fixa para o header */
+  padding: 0; /* Sem espaços laterais ou verticais */
+  box-sizing: border-box; /* Inclui padding e borda no cálculo da largura e altura */
+  display: flex;
+  flex-direction: column; /* Organiza as divs dentro do header em coluna */
 }
 
+/* Estilo da div superior (com menu, texto e avatar/sacola) */
+.topHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Alinha os itens verticalmente no centro */
+  height: 50%; /* A metade da altura do header */
+  width: 100%; /* Garante que ocupe toda a largura da tela */
+  padding: 0 10px; /* Um pequeno espaçamento lateral */
+}
+
+/* Estilo da div inferior (input de busca) */
+.bottomHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50%; /* A outra metade da altura do header */
+  width: 100%; /* Garante que ocupe toda a largura da tela */
+  background-color: #333; /* Fundo cinza escuro para a parte inferior */
+  padding: 0; /* Remove padding interno */
+}
+
+/* Restante dos estilos do Header */
+.menu {
+  width: 30px; /* Diminuindo o tamanho da imagem do menu */
+  height: 30px;
+}
+
+.logoText {
+  font-size: 18px; /* Tamanho do texto */
+  color: #fff; /* Cor do texto */
+  font-weight: bold; /* Deixar o texto em negrito */
+  flex-grow: 1; /* Faz com que o texto ocupe o espaço restante entre o menu e o avatar */
+  text-align: center; /* Centraliza o texto */
+}
+
+.avatarAndBag {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Aproximando o avatar da sacola */
+}
+
+.avatar {
+  width: 35px; /* Diminuindo o tamanho do avatar */
+  height: 35px;
+}
+
+.sacola {
+  width: 35px; /* Diminuindo o tamanho da sacola */
+  height: 35px;
+}
+
+.searchInput {
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 25px;
+  width: 80%;
+}
+
+.lupa {
+  width: 25px;
+  height: 25px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+/* Logo da loja */
 .logo {
-  width: 300px; /* Aumenta o tamanho do logo */
-  height: auto;
+  width: auto; /* Ajusta automaticamente a largura */
+  height: 100%; /* Faz o logo ter a mesma altura que o input */
+  margin-left: 10px; /* Espaçamento entre o input e o logo */
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+  .topHeader {
+    padding: 10px;
+  }
+
+  .avatarAndBag {
+    gap: 10px; /* Mantém o avatar e sacola mais próximos */
+  }
+
+  .menu {
+    width: 30px;
+    height: 30px;
+  }
+
+  .logoText {
+    font-size: 14px; /* Ajusta o tamanho do texto em telas menores */
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+  }
+
+  .sacola {
+    width: 30px;
+    height: 30px;
+  }
+
+  .searchInput {
+    width: 90%;
+  }
+
+  .lupa {
+    width: 20px;
+    height: 20px;
+  }
+
+  .logo {
+    height: 100%;
+    width: auto;
+  }
 }
