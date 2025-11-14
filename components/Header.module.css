@@ -1,96 +1,125 @@
-/* Estilo do header */
+/* HEADER GERAL */
 .header {
-  background-color: #000; /* Fundo preto */
-  color: #fff; /* Texto prata */
-  width: 100%; /* Ocupa toda a largura da tela */
-  height: 95px; /* Definir altura fixa para o header */
-  padding: 0; /* Sem espaços laterais ou verticais */
-  box-sizing: border-box; /* Inclui padding e borda no cálculo da largura e altura */
+  width: 100%;
+  color: #f5f5f5;
+  background: rgba(0, 0, 0, 0.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
   display: flex;
-  flex-direction: column; /* Organiza as divs dentro do header em coluna */
+  flex-direction: column;
+  box-sizing: border-box;
+  z-index: 50;
 }
 
-/* Estilo da div superior (com menu, texto e avatar/sacola) */
+/* TOPO: MENU, NOME E ÍCONES */
 .topHeader {
   display: flex;
   justify-content: space-between;
-  align-items: center; /* Alinha os itens verticalmente no centro */
-  height: 50%; /* A metade da altura do header */
-  width: 100%; /* Garante que ocupe toda a largura da tela */
-  padding: 0 10px; /* Um pequeno espaçamento lateral */
+  align-items: center;
+  height: 50%;
+  width: 100%;
+  padding: 6px 10px;
 }
 
-/* Estilo da div inferior (input de busca) */
+.menu {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.logoText {
+  font-size: 18px;
+  color: #f5f5f5;
+  font-weight: 700;
+  flex-grow: 1;
+  text-align: center;
+  letter-spacing: 0.18em;
+}
+
+/* Avatar + Sacola */
+.avatarAndBag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar,
+.sacola {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+
+/* LINHA DO MEIO: BUSCA + LOGO */
 .bottomHeader {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 50%; /* A outra metade da altura do header */
-  width: 100%; /* Garante que ocupe toda a largura da tela */
-  background-color: #333; /* Fundo cinza escuro para a parte inferior */
-  padding: 0; /* Remove padding interno */
+  height: 50%;
+  width: 100%;
+  background-color: #333;
+  padding: 4px 10px;
+  box-sizing: border-box;
 }
 
-/* Restante dos estilos do Header */
-.menu {
-  width: 20px; /* Diminuindo o tamanho da imagem do menu */
-  height: 20px;
-}
-
-.logoText {
-  font-size: 18px; /* Tamanho do texto */
-  color: #fff; /* Cor do texto */
-  font-weight: bold; /* Deixar o texto em negrito */
-  flex-grow: 1; /* Faz com que o texto ocupe o espaço restante entre o menu e o avatar */
-  text-align: center; /* Centraliza o texto */
-}
-
-.avatarAndBag {
+/* Wrapper para input + lupa */
+.searchWrapper {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px; /* Aproximando o avatar da sacola */
-}
-
-.avatar {
-  width: 25px; /* Diminuindo o tamanho do avatar */
-  height: 25px;
-}
-
-.sacola {
-  width: 25px; /* Diminuindo o tamanho da sacola */
-  height: 25px;
-}
-
-.searchInput {
-  padding: 10px;
-  font-size: 16px;
-  border: none;
-  border-radius: 25px;
   width: 80%;
 }
 
+/* Input de busca */
+.searchInput {
+  padding: 8px 40px 8px 14px;
+  font-size: 14px;
+  border: none;
+  border-radius: 999px;
+  width: 100%;
+  outline: none;
+  background: #202020;
+  color: #f0f0f0;
+  box-shadow: 0 0 0 1px #555;
+}
+
+.searchInput::placeholder {
+  color: #888;
+}
+
+/* Ícone da lupa */
 .lupa {
-  width: 25px;
-  height: 25px;
-  margin-left: 10px;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 12px;
   cursor: pointer;
+  filter: invert(1);
 }
 
-/* Logo da loja */
+/* Logo da loja ao lado direito (mobile) */
 .logo {
-  width: auto; /* Ajusta automaticamente a largura */
-  height: 100%; /* Faz o logo ter a mesma altura que o input */
-  margin-left: 10px; /* Espaçamento entre o input e o logo */
+  width: auto;
+  height: 100%;
+  max-height: 40px;
+  margin-left: 10px;
 }
 
-/* Responsividade para dispositivos móveis */
+/* NAV DESKTOP (por padrão escondida, mostramos no @media min-width) */
+.desktopNav {
+  display: none;
+  width: 100%;
+}
+
+/* ====== MOBILE FIRST ====== */
 @media (max-width: 768px) {
-  .topHeader {
-    padding: 10px;
+  .header {
+    height: 95px;
   }
 
-  .avatarAndBag {
-    gap: 10px; /* Mantém o avatar e sacola mais próximos */
+  .topHeader {
+    padding: 10px;
   }
 
   .menu {
@@ -99,30 +128,139 @@
   }
 
   .logoText {
-    font-size: 14px; /* Ajusta o tamanho do texto em telas menores */
+    font-size: 14px;
   }
 
-  .avatar {
-    width: 30px;
-    height: 30px;
-  }
-
+  .avatar,
   .sacola {
     width: 30px;
     height: 30px;
   }
 
-  .searchInput {
+  .bottomHeader {
+    background-color: #333;
+  }
+
+  .searchWrapper {
     width: 90%;
   }
 
+  .searchInput {
+    font-size: 14px;
+  }
+
   .lupa {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
 
   .logo {
     height: 100%;
     width: auto;
+  }
+}
+
+/* ====== WEB / DESKTOP ====== */
+@media (min-width: 769px) {
+  .header {
+    height: auto;
+    padding: 6px 40px 10px;
+  }
+
+  .topHeader {
+    padding: 6px 0;
+  }
+
+  .menu {
+    width: 22px;
+    height: 22px;
+  }
+
+  .logoText {
+    font-size: 20px;
+  }
+
+  .avatar,
+  .sacola {
+    width: 28px;
+    height: 28px;
+  }
+
+  .bottomHeader {
+    background: transparent;
+    padding: 6px 0 4px;
+    justify-content: space-between;
+    border-top: 1px solid rgba(120, 120, 120, 0.3);
+  }
+
+  .searchWrapper {
+    width: 45%;
+    max-width: 420px;
+  }
+
+  .searchInput {
+    font-size: 15px;
+    padding: 10px 44px 10px 16px;
+    background: #111;
+    box-shadow: 0 0 0 1px #666;
+  }
+
+  .lupa {
+    width: 22px;
+    height: 22px;
+    right: 14px;
+  }
+
+  /* Logo maior e alinhado à direita */
+  .logo {
+    max-height: 44px;
+    margin-left: 24px;
+  }
+
+  /* NAVBAR DESKTOP */
+  .desktopNav {
+    display: flex;
+    width: 100%;
+    margin-top: 6px;
+    border-top: 1px solid rgba(130, 130, 130, 0.3);
+    border-bottom: 1px solid rgba(130, 130, 130, 0.3);
+  }
+
+  .desktopNavList {
+    list-style: none;
+    display: flex;
+    gap: 28px;
+    padding: 8px 0;
+    margin: 0;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .desktopNavItem a {
+    text-decoration: none;
+    color: #d0d0d0;
+    position: relative;
+    padding-bottom: 4px;
+    transition: color 0.2s ease;
+  }
+
+  .desktopNavItem a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #c0c0c0, #ffffff);
+    transition: width 0.25s ease;
+  }
+
+  .desktopNavItem a:hover {
+    color: #ffffff;
+  }
+
+  .desktopNavItem a:hover::after {
+    width: 100%;
   }
 }
