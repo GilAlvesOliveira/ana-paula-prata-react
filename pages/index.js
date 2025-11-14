@@ -35,12 +35,12 @@ const Home = () => {
     <div className={styles.container}>
       <Header />
 
-      {/* HERO */}
+      {/* HERO COM LOGO DA LOJA */}
       <div className={styles.content}>
         <div className={styles.diamanteContainer}>
           <img
-            src="/imagens/diamante.png"
-            alt="Diamante"
+            src="/imagens/LogoLojaPP.png"
+            alt="Logo Ana Paula Pratas"
             className={styles.diamante}
           />
         </div>

@@ -1,26 +1,33 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+html, body {
+  font-family: 'Inter';
+  letter-spacing: 0.3px; /* leve, elegante */
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  background-color: #000; /* fundo elegante */
+  color: #d3d3d3; /* prata premium */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Títulos principais */
+h1, h2, h3 {
+  font-weight: 600; /* destaque elegante */
+  letter-spacing: 1px; /* estilo Vivara */
+  text-transform: uppercase;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Texto pequeno */
+small, .small-text {
+  font-size: 13px;
+  letter-spacing: 0.5px;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: "Comic Sans MS","Comic Sans",cursive,Arial,Helvetica,sans-serif;
+/* Para botões/menu Web */
+.nav-item, .menu-item {
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* Inputs */
+input, button {
+  font-family: 'Inter';
 }

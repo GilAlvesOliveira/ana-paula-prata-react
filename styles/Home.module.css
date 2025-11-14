@@ -5,30 +5,32 @@
   background-color: #000;
 }
 
-/* ÁREA HERO */
+/* ÁREA HERO - FUNDO PRETO POR CAUSA DO LOGO */
 .content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 0 20px;
-  background: linear-gradient(180deg, #111 0%, #000 100%);
-  height: 150px;
+  padding: 12px 20px 20px;
+  background: #000; /* tudo preto pra casar com o logo */
 }
 
-/* DIAMANTE */
+/* CONTAINER DO LOGO (ANTES ERA O DIAMANTE) */
 .diamanteContainer {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 8px;
+  padding: 8px 0;
+  background-color: #000; /* garantido preto em toda a área */
 }
 
+/* LOGO NO HERO (ANTES ERA .diamante) */
 .diamante {
-  width: 32px;
+  width: 220px;
   height: auto;
-  margin-bottom: 5px;
+  object-fit: contain;
 }
 
 /* TÍTULO HERO */
@@ -37,6 +39,7 @@
   font-weight: 700;
   color: #d0d0d0;
   letter-spacing: 2px;
+  margin-top: 6px;
 }
 
 /* DESCRIÇÃO HERO */
@@ -46,6 +49,7 @@
   width: 80%;
   text-align: center;
   line-height: 1.5;
+  margin-top: 4px;
 }
 
 /* SEÇÃO CATEGORIAS */
@@ -204,7 +208,7 @@
 
 @media (max-width: 768px) {
   .diamante {
-    width: 24px;
+    width: 150px;
   }
 
   .title {
@@ -236,7 +240,8 @@
   }
 
   .content {
-    height: 200px;
+    padding-top: 20px;
+    padding-bottom: 24px;
   }
 
   .title {
