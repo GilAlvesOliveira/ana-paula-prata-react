@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import styles from '../styles/Home.module.css';
 
 const Home = () => {
@@ -10,25 +11,45 @@ const Home = () => {
     '/imagens/pingentes.webp',
   ];
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  // Monta pares: [1,2], [2,3], [3,4], [4,1]
+  // Pares: [1,2], [2,3], [3,4], [4,1]
   const pairs = images.map((_, index) => ({
     id: index,
     left: images[index],
     right: images[(index + 1) % images.length],
   }));
 
-  const moveLeft = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? pairs.length - 1 : prevIndex - 1
-    );
-  };
+  // Array estendido para carrossel infinito: [último, ...pares, primeiro]
+  const extendedPairs = [
+    pairs[pairs.length - 1],
+    ...pairs,
+    pairs[0],
+  ];
+
+  // Começa no índice 1 (primeiro slide "real")
+  const [currentIndex, setCurrentIndex] = useState(1);
+  const [isTransitionEnabled, setIsTransitionEnabled] = useState(true);
 
   const moveRight = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex === pairs.length - 1 ? 0 : prevIndex + 1
-    );
+    setIsTransitionEnabled(true);
+    setCurrentIndex((prevIndex) => prevIndex + 1);
+  };
+
+  const moveLeft = () => {
+    setIsTransitionEnabled(true);
+    setCurrentIndex((prevIndex) => prevIndex - 1);
+  };
+
+  const handleTransitionEnd = () => {
+    // Se chegar no clone do primeiro (última posição), volta silenciosamente pro primeiro real
+    if (currentIndex === extendedPairs.length - 1) {
+      setIsTransitionEnabled(false);
+      setCurrentIndex(1);
+    }
+    // Se chegar no clone do último (posição 0), volta silenciosamente pro último real
+    if (currentIndex === 0) {
+      setIsTransitionEnabled(false);
+      setCurrentIndex(extendedPairs.length - 2);
+    }
   };
 
   return (
@@ -76,10 +97,14 @@ const Home = () => {
           <div className={styles.carouselWindow}>
             <div
               className={styles.carouselTrack}
-              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+              style={{
+                transform: `translateX(-${currentIndex * 100}%)`,
+                transition: isTransitionEnabled ? 'transform 0.45s ease-out' : 'none',
+              }}
+              onTransitionEnd={handleTransitionEnd}
             >
-              {pairs.map((pair) => (
-                <div className={styles.slide} key={pair.id}>
+              {extendedPairs.map((pair, index) => (
+                <div className={styles.slide} key={`${pair.id}-${index}`}>
                   <div className={styles.slideImageWrapper}>
                     <img
                       src={pair.left}
@@ -122,7 +147,8 @@ const Home = () => {
         </div>
       </div>
 
-      <div className={styles.blackBackground}></div>
+      {/* FOOTER */}
+      <Footer />
     </div>
   );
 };
