@@ -4,18 +4,18 @@ import Footer from '../components/Footer';
 import styles from '../styles/Home.module.css';
 
 const Home = () => {
-  const images = [
-    '/imagens/pulseiras.webp',
-    '/imagens/aneis.webp',
-    '/imagens/brincos.webp',
-    '/imagens/pingentes.webp',
+  const categories = [
+    { id: 0, src: '/imagens/pulseiras.webp', label: 'PULSEIRAS' },
+    { id: 1, src: '/imagens/aneis.webp', label: 'ANÉIS' },
+    { id: 2, src: '/imagens/brincos.webp', label: 'BRINCOS' },
+    { id: 3, src: '/imagens/pingentes.webp', label: 'PINGENTES' },
   ];
 
   // Pares: [1,2], [2,3], [3,4], [4,1]
-  const pairs = images.map((_, index) => ({
+  const pairs = categories.map((_, index) => ({
     id: index,
-    left: images[index],
-    right: images[(index + 1) % images.length],
+    left: categories[index],
+    right: categories[(index + 1) % categories.length],
   }));
 
   // Array estendido para carrossel infinito: [último, ...pares, primeiro]
@@ -106,18 +106,35 @@ const Home = () => {
               {extendedPairs.map((pair, index) => (
                 <div className={styles.slide} key={`${pair.id}-${index}`}>
                   <div className={styles.slideImageWrapper}>
-                    <img
-                      src={pair.left}
-                      alt="Joia"
-                      className={styles.carouselImg}
-                    />
+                    <button
+                      type="button"
+                      className={styles.categoryButton}
+                    >
+                      <img
+                        src={pair.left.src}
+                        alt={pair.left.label}
+                        className={styles.carouselImg}
+                      />
+                      <span className={styles.categoryLabel}>
+                        {pair.left.label}
+                      </span>
+                    </button>
                   </div>
+
                   <div className={styles.slideImageWrapper}>
-                    <img
-                      src={pair.right}
-                      alt="Joia"
-                      className={styles.carouselImg}
-                    />
+                    <button
+                      type="button"
+                      className={styles.categoryButton}
+                    >
+                      <img
+                        src={pair.right.src}
+                        alt={pair.right.label}
+                        className={styles.carouselImg}
+                      />
+                      <span className={styles.categoryLabel}>
+                        {pair.right.label}
+                      </span>
+                    </button>
                   </div>
                 </div>
               ))}
@@ -135,13 +152,21 @@ const Home = () => {
 
         {/* DESKTOP: 4 imagens lado a lado */}
         <div className={styles.carouselDesktop}>
-          {images.map((src, index) => (
-            <div className={styles.desktopImageWrapper} key={index}>
-              <img
-                src={src}
-                alt={`Joia ${index + 1}`}
-                className={styles.desktopImg}
-              />
+          {categories.map((category) => (
+            <div className={styles.desktopImageWrapper} key={category.id}>
+              <button
+                type="button"
+                className={styles.categoryButton}
+              >
+                <img
+                  src={category.src}
+                  alt={category.label}
+                  className={styles.desktopImg}
+                />
+                <span className={styles.categoryLabel}>
+                  {category.label}
+                </span>
+              </button>
             </div>
           ))}
         </div>
