@@ -22,14 +22,14 @@
   padding: 6px 10px;
 }
 
-/* Botão que envolve o ícone do menu */
+/* Botão do menu (clicável) */
 .menuButton {
   background: transparent;
   border: none;
   padding: 0;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  cursor: pointer;
 }
 
 .menu {
@@ -47,23 +47,39 @@
   letter-spacing: 0.18em;
 }
 
-/* Avatar + Sacola */
+/* Container para avatar, sacola e nome */
 .avatarAndBag {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: flex-end;
 }
 
-/* Botão para ícones (avatar, sacola) */
+/* Bloco de usuário (nome + ícones) */
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Nome do usuário ao lado do avatar */
+.userName {
+  font-size: 12px;
+  color: #d6d6d6;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Botões de ícones (avatar/sacola) */
 .iconButton {
   background: transparent;
   border: none;
   padding: 0;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  cursor: pointer;
 }
 
+/* Avatar + sacola */
 .avatar,
 .sacola {
   width: 25px;
@@ -131,173 +147,6 @@
   width: 100%;
 }
 
-/* ============ MENU LATERAL (SLIDE-OVER) ============ */
-
-/* Overlay escuro que cobre a tela */
-.menuOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 9999;
-  display: flex;
-  justify-content: flex-start;
-}
-
-/* Painel lateral vindo da esquerda */
-.menuPanel {
-  width: 80%;
-  max-width: 340px;
-  height: 100%;
-  background: #050505;
-  color: #f5f5f5;
-  padding: 16px 16px 24px;
-  box-shadow: 4px 0 18px rgba(0, 0, 0, 0.8);
-
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-
-  transform: translateX(0);
-  animation: slideInFromLeft 0.25s ease-out;
-}
-
-/* Animação de entrada do painel */
-@keyframes slideInFromLeft {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-/* Cabeçalho do menu lateral */
-.menuHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.menuLogo {
-  font-size: 16px;
-  letter-spacing: 0.15em;
-  font-weight: 500;
-}
-
-/* Botão de fechar (X) */
-.menuCloseButton {
-  background: transparent;
-  border: none;
-  font-size: 20px;
-  color: #f5f5f5;
-  cursor: pointer;
-}
-
-/* Área do botão "Olá! Entre ou Cadastre-se" */
-.menuUserArea {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  padding-bottom: 12px;
-}
-
-.menuPrimaryButton {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 999px;
-  border: 1px solid #f5f5f5;
-  background: #f5f5f5;
-  color: #000;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  cursor: pointer;
-}
-
-/* Navegação principal do menu */
-.menuNav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.menuNav li {
-  margin-bottom: 8px;
-}
-
-.menuNav button {
-  width: 100%;
-  text-align: left;
-  padding: 8px 0;
-  border: none;
-  background: transparent;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #f5f5f5;
-  cursor: pointer;
-  position: relative;
-}
-
-/* ===== EFFECT HOVER COM LINHA ANIMADA (IGUAL AO DESKTOP) ===== */
-
-.menuNav button::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #c0c0c0, #ffffff);
-  transition: width 0.25s ease;
-}
-
-.menuNav button:hover {
-  color: #ffffff;
-}
-
-.menuNav button:hover::after {
-  width: 100%;
-}
-
-/* Links adicionais (Minha conta, sobre, contato, etc.) */
-.menuExtraLinks {
-  margin-top: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding-top: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.menuExtraLinks button {
-  border: none;
-  background: transparent;
-  text-align: left;
-  font-size: 13px;
-  color: #a0a0a0;
-  cursor: pointer;
-  position: relative;
-}
-
-/* ANIMAÇÃO DE LINHA PARA LINKS EXTRAS */
-.menuExtraLinks button::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #c0c0c0, #ffffff);
-  transition: width 0.25s ease;
-}
-
-.menuExtraLinks button:hover {
-  color: #ffffff;
-}
-
-.menuExtraLinks button:hover::after {
-  width: 100%;
-}
-
 /* ====== MOBILE FIRST ====== */
 @media (max-width: 768px) {
   .header {
@@ -343,6 +192,10 @@
   .logo {
     height: 100%;
     width: auto;
+  }
+
+  .userName {
+    display: none; /* no mobile pode ocultar o nome se quiser */
   }
 }
 
@@ -448,5 +301,176 @@
 
   .desktopNavItem a:hover::after {
     width: 100%;
+  }
+}
+
+/* =========================
+   MENU LATERAL (SLIDE-OVER)
+   ========================= */
+
+.menuOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  z-index: 60;
+}
+
+.menuPanel {
+  width: 80%;
+  max-width: 320px;
+  background: #050505;
+  box-shadow: 4px 0 18px rgba(0, 0, 0, 0.9);
+  padding: 16px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.2s ease-out;
+}
+
+/* Cabeçalho do menu */
+.menuHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.menuLogo {
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #f5f5f5;
+}
+
+.menuCloseButton {
+  background: transparent;
+  border: none;
+  color: #dcdcdc;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Área de usuário / login */
+.menuUserArea {
+  margin-bottom: 18px;
+}
+
+.menuPrimaryButton {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid #f5f5f5;
+  background: #f5f5f5;
+  color: #000;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.menuPrimaryButton:hover {
+  opacity: 0.85;
+}
+
+/* Navegação principal dentro do menu */
+.menuNav {
+  margin-bottom: 24px;
+}
+
+.menuNav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menuNav ul li {
+  margin-bottom: 8px;
+}
+
+/* Botões com underline no hover (como desktop) */
+.menuNav ul li button {
+  background: transparent;
+  border: none;
+  color: #e0e0e0;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 0;
+  cursor: pointer;
+  position: relative;
+  text-align: left;
+  width: 100%;
+}
+
+.menuNav ul li button::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #c0c0c0, #ffffff);
+  transition: width 0.25s ease;
+}
+
+.menuNav ul li button:hover::after {
+  width: 40%;
+}
+
+/* Links extras embaixo */
+.menuExtraLinks {
+  border-top: 1px solid rgba(130, 130, 130, 0.35);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menuExtraLinks button {
+  background: transparent;
+  border: none;
+  color: #bcbcbc;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 4px 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.menuExtraLinks button::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #c0c0c0, #ffffff);
+  transition: width 0.25s ease;
+}
+
+.menuExtraLinks button:hover::after {
+  width: 40%;
+}
+
+/* Botão de sair */
+.logoutButton {
+  margin-top: 6px;
+  color: #ffb3b3 !important;
+}
+
+/* Animação de entrada do painel */
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0.4;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
 }

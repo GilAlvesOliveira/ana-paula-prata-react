@@ -1,25 +1,73 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import styles from './Header.module.css';
+import { getUser, signOut } from '../services/storage';
 
 const Header = () => {
-  // TODO: substituir por estado real de autenticação quando tiver login
-  const isLoggedIn = false;
+  const router = useRouter();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [usuario, setUsuario] = useState(null);
 
-  const handleOpenMenu = () => setIsMenuOpen(true);
-  const handleCloseMenu = () => setIsMenuOpen(false);
+  useEffect(() => {
+    const user = getUser();
+    if (user) {
+      setUsuario(user);
+    }
+  }, []);
+
+  const handleLoginRedirect = () => {
+    router.push('/login');
+    setIsMenuOpen(false);
+  };
+
+  const handleOpenMenu = () => {
+    setIsMenuOpen(true);
+  };
+
+  const handleCloseMenu = () => {
+    setIsMenuOpen(false);
+  };
+
+  // Clique no avatar (topo) – por enquanto leva pro login/minha conta
+  const handleAvatarClick = () => {
+    router.push('/login');
+  };
+
+  const handleLogout = () => {
+    signOut();
+    setUsuario(null);
+    setIsMenuOpen(false);
+    router.push('/'); // sempre home ao deslogar
+  };
+
+  const firstName =
+    usuario && usuario.nome
+      ? usuario.nome.split(' ')[0]
+      : null;
+
+  // Clique no botão "Olá, {nome}" dentro do menu lateral
+  const handleMenuUserClick = () => {
+    if (usuario) {
+      // se estiver logado → vai pra home
+      router.push('/');
+      setIsMenuOpen(false);
+    } else {
+      // se não estiver logado → vai pra login
+      router.push('/login');
+      setIsMenuOpen(false);
+    }
+  };
 
   return (
     <>
       <header className={styles.header}>
-        {/* Linha superior: menu, logo texto, avatar/sacola */}
+        {/* Linha superior: menu, logo texto, avatar/sacola + nome */}
         <div className={styles.topHeader}>
           <button
             type="button"
             className={styles.menuButton}
             onClick={handleOpenMenu}
-            aria-label="Abrir menu"
           >
             <img src="/imagens/menu.png" alt="Menu" className={styles.menu} />
           </button>
@@ -29,15 +77,19 @@ const Header = () => {
           </div>
 
           <div className={styles.avatarAndBag}>
-            {isLoggedIn && (
-              <>
+            {usuario && (
+              <div className={styles.userInfo}>
+                <span className={styles.userName}>
+                  Olá, {firstName}
+                </span>
+
                 <button
                   type="button"
                   className={styles.iconButton}
-                  aria-label="Perfil"
+                  onClick={handleAvatarClick}
                 >
                   <img
-                    src="/imagens/avatarCinza.png"
+                    src={usuario.avatar || '/imagens/avatarCinza.png'}
                     alt="Avatar"
                     className={styles.avatar}
                   />
@@ -46,7 +98,6 @@ const Header = () => {
                 <button
                   type="button"
                   className={styles.iconButton}
-                  aria-label="Sacola"
                 >
                   <img
                     src="/imagens/sacola.png"
@@ -54,7 +105,7 @@ const Header = () => {
                     className={styles.sacola}
                   />
                 </button>
-              </>
+              </div>
             )}
           </div>
         </div>
@@ -77,7 +128,7 @@ const Header = () => {
           />
         </div>
 
-        {/* Navegação só para WEB (desktop) */}
+        {/* Navegação só WEB */}
         <nav className={styles.desktopNav}>
           <ul className={styles.desktopNavList}>
             <li className={styles.desktopNavItem}><a href="#">Joias</a></li>
@@ -90,51 +141,83 @@ const Header = () => {
         </nav>
       </header>
 
-      {/* MENU LATERAL (abre em mobile e web) */}
+      {/* MENU LATERAL (SLIDE-OVER) */}
       {isMenuOpen && (
         <div className={styles.menuOverlay} onClick={handleCloseMenu}>
-          <aside
+          <div
             className={styles.menuPanel}
-            onClick={(e) => e.stopPropagation()} // não fecha se clicar dentro
+            onClick={(e) => e.stopPropagation()}
           >
-            <header className={styles.menuHeader}>
-              <div className={styles.menuLogo}>
-                ANA PAULA PRATAS
-              </div>
-
+            {/* Cabeçalho do menu */}
+            <div className={styles.menuHeader}>
+              <span className={styles.menuLogo}>ANA PAULA PRATAS</span>
               <button
                 type="button"
                 className={styles.menuCloseButton}
                 onClick={handleCloseMenu}
-                aria-label="Fechar menu"
               >
                 ✕
               </button>
-            </header>
+            </div>
 
+            {/* Área usuário / login */}
             <div className={styles.menuUserArea}>
-              <button type="button" className={styles.menuPrimaryButton}>
-                Olá! Entre ou Cadastre-se
+              <button
+                type="button"
+                className={styles.menuPrimaryButton}
+                onClick={handleMenuUserClick}
+              >
+                {usuario ? `Olá, ${firstName}` : 'Olá! Entre ou Cadastre-se'}
               </button>
             </div>
 
+            {/* Navegação principal do menu */}
             <nav className={styles.menuNav}>
               <ul>
-                <li><button type="button">Pulseiras</button></li>
-                <li><button type="button">Anéis</button></li>
-                <li><button type="button">Brincos</button></li>
-                <li><button type="button">Pingentes</button></li>
-                <li><button type="button">Promoções</button></li>
+                <li>
+                  <button type="button">Pulseiras</button>
+                </li>
+                <li>
+                  <button type="button">Anéis</button>
+                </li>
+                <li>
+                  <button type="button">Brincos</button>
+                </li>
+                <li>
+                  <button type="button">Pingentes</button>
+                </li>
+                <li>
+                  <button type="button">Promoções</button>
+                </li>
               </ul>
             </nav>
 
+            {/* Links extras + SAIR */}
             <div className={styles.menuExtraLinks}>
-              <button type="button">Minha Conta</button>
-              <button type="button">Sobre nós</button>
-              <button type="button">Contato</button>
-              <button type="button">Informações</button>
+              <button type="button">
+                Minha Conta
+              </button>
+              <button type="button">
+                Sobre nós
+              </button>
+              <button type="button">
+                Contato
+              </button>
+              <button type="button">
+                Informações
+              </button>
+
+              {usuario && (
+                <button
+                  type="button"
+                  className={styles.logoutButton}
+                  onClick={handleLogout}
+                >
+                  Sair
+                </button>
+              )}
             </div>
-          </aside>
+          </div>
         </div>
       )}
     </>
