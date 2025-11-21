@@ -22,12 +22,22 @@
   padding: 6px 10px;
 }
 
-.menu {
-  width: 20px;
-  height: 20px;
+/* Botão que envolve o ícone do menu */
+.menuButton {
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
   cursor: pointer;
 }
 
+.menu {
+  width: 20px;
+  height: 20px;
+}
+
+/* Texto central do logo */
 .logoText {
   font-size: 18px;
   color: #f5f5f5;
@@ -44,11 +54,20 @@
   gap: 10px;
 }
 
+/* Botão para ícones (avatar, sacola) */
+.iconButton {
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
 .avatar,
 .sacola {
   width: 25px;
   height: 25px;
-  cursor: pointer;
 }
 
 /* LINHA DO MEIO: BUSCA + LOGO */
@@ -109,6 +128,173 @@
 /* NAV DESKTOP (por padrão escondida, mostramos no @media min-width) */
 .desktopNav {
   display: none;
+  width: 100%;
+}
+
+/* ============ MENU LATERAL (SLIDE-OVER) ============ */
+
+/* Overlay escuro que cobre a tela */
+.menuOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Painel lateral vindo da esquerda */
+.menuPanel {
+  width: 80%;
+  max-width: 340px;
+  height: 100%;
+  background: #050505;
+  color: #f5f5f5;
+  padding: 16px 16px 24px;
+  box-shadow: 4px 0 18px rgba(0, 0, 0, 0.8);
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  transform: translateX(0);
+  animation: slideInFromLeft 0.25s ease-out;
+}
+
+/* Animação de entrada do painel */
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Cabeçalho do menu lateral */
+.menuHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.menuLogo {
+  font-size: 16px;
+  letter-spacing: 0.15em;
+  font-weight: 500;
+}
+
+/* Botão de fechar (X) */
+.menuCloseButton {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  color: #f5f5f5;
+  cursor: pointer;
+}
+
+/* Área do botão "Olá! Entre ou Cadastre-se" */
+.menuUserArea {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 12px;
+}
+
+.menuPrimaryButton {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid #f5f5f5;
+  background: #f5f5f5;
+  color: #000;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+/* Navegação principal do menu */
+.menuNav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menuNav li {
+  margin-bottom: 8px;
+}
+
+.menuNav button {
+  width: 100%;
+  text-align: left;
+  padding: 8px 0;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #f5f5f5;
+  cursor: pointer;
+  position: relative;
+}
+
+/* ===== EFFECT HOVER COM LINHA ANIMADA (IGUAL AO DESKTOP) ===== */
+
+.menuNav button::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #c0c0c0, #ffffff);
+  transition: width 0.25s ease;
+}
+
+.menuNav button:hover {
+  color: #ffffff;
+}
+
+.menuNav button:hover::after {
+  width: 100%;
+}
+
+/* Links adicionais (Minha conta, sobre, contato, etc.) */
+.menuExtraLinks {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menuExtraLinks button {
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  color: #a0a0a0;
+  cursor: pointer;
+  position: relative;
+}
+
+/* ANIMAÇÃO DE LINHA PARA LINKS EXTRAS */
+.menuExtraLinks button::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #c0c0c0, #ffffff);
+  transition: width 0.25s ease;
+}
+
+.menuExtraLinks button:hover {
+  color: #ffffff;
+}
+
+.menuExtraLinks button:hover::after {
   width: 100%;
 }
 
