@@ -117,3 +117,15 @@ export async function deleteProdutoApi(id) {
   }
   return apiRequest(`/api/products/produtos?_id=${id}`, 'DELETE', null, token);
 }
+
+// =============== PRODUTOS - BUSCA POR CATEGORIA / TERMO ===============
+
+// Usa a rota /api/products/busca que você já tem no backend
+export async function buscarProdutosApi({ q }) {
+  const params = new URLSearchParams();
+  if (q) params.append('q', q);
+
+  const queryString = params.toString() ? `?${params.toString()}` : '';
+
+  return apiRequest(`/api/products/busca${queryString}`, 'GET');
+}

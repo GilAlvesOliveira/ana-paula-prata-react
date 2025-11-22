@@ -109,6 +109,12 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
+  // 🔹 Menu lateral: clicar em categoria
+  const handleMenuCategoriaClick = (slug) => {
+    router.push(`/categoria/${slug}`);
+    setIsMenuOpen(false);
+  };
+
   return (
     <>
       <header className={styles.header}>
@@ -184,12 +190,27 @@ const Header = () => {
         {/* Navegação só WEB */}
         <nav className={styles.desktopNav}>
           <ul className={styles.desktopNavList}>
-            <li className={styles.desktopNavItem}><a href="#">Joias</a></li>
-            <li className={styles.desktopNavItem}><a href="#">Pulseiras</a></li>
-            <li className={styles.desktopNavItem}><a href="#">Anéis</a></li>
-            <li className={styles.desktopNavItem}><a href="#">Brincos</a></li>
-            <li className={styles.desktopNavItem}><a href="#">Pingentes</a></li>
-            <li className={styles.desktopNavItem}><a href="#">Promoções</a></li>
+            {/* Joias → todas as joias disponíveis */}
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/joias">Joias</a>
+            </li>
+
+            {/* Categorias específicas */}
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/pulseiras">Pulseiras</a>
+            </li>
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/aneis">Anéis</a>
+            </li>
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/brincos">Brincos</a>
+            </li>
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/pingentes">Pingentes</a>
+            </li>
+            <li className={styles.desktopNavItem}>
+              <a href="#">Promoções</a>
+            </li>
           </ul>
         </nav>
       </header>
@@ -227,20 +248,53 @@ const Header = () => {
             {/* Navegação principal do menu */}
             <nav className={styles.menuNav}>
               <ul>
+                {/* Joias → todas as joias */}
                 <li>
-                  <button type="button">Pulseiras</button>
+                  <button
+                    type="button"
+                    onClick={() => handleMenuCategoriaClick('joias')}
+                  >
+                    Joias
+                  </button>
+                </li>
+
+                {/* Categorias específicas */}
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => handleMenuCategoriaClick('pulseiras')}
+                  >
+                    Pulseiras
+                  </button>
                 </li>
                 <li>
-                  <button type="button">Anéis</button>
+                  <button
+                    type="button"
+                    onClick={() => handleMenuCategoriaClick('aneis')}
+                  >
+                    Anéis
+                  </button>
                 </li>
                 <li>
-                  <button type="button">Brincos</button>
+                  <button
+                    type="button"
+                    onClick={() => handleMenuCategoriaClick('brincos')}
+                  >
+                    Brincos
+                  </button>
                 </li>
                 <li>
-                  <button type="button">Pingentes</button>
+                  <button
+                    type="button"
+                    onClick={() => handleMenuCategoriaClick('pingentes')}
+                  >
+                    Pingentes
+                  </button>
                 </li>
                 <li>
-                  <button type="button">Promoções</button>
+                  <button type="button">
+                    Promoções
+                  </button>
                 </li>
               </ul>
             </nav>

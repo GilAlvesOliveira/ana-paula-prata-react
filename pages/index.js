@@ -10,10 +10,10 @@ const Home = () => {
   const router = useRouter();
 
   const categories = [
-    { id: 0, src: '/imagens/pulseiras.webp', label: 'PULSEIRAS' },
-    { id: 1, src: '/imagens/aneis.webp', label: 'ANÉIS' },
-    { id: 2, src: '/imagens/brincos.webp', label: 'BRINCOS' },
-    { id: 3, src: '/imagens/pingentes.webp', label: 'PINGENTES' },
+    { id: 0, src: '/imagens/pulseiras.webp', label: 'PULSEIRAS', slug: 'pulseiras' },
+    { id: 1, src: '/imagens/aneis.webp', label: 'ANÉIS', slug: 'aneis' },
+    { id: 2, src: '/imagens/brincos.webp', label: 'BRINCOS', slug: 'brincos' },
+    { id: 3, src: '/imagens/pingentes.webp', label: 'PINGENTES', slug: 'pingentes' },
   ];
 
   // Pares: [1,2], [2,3], [3,4], [4,1]
@@ -99,6 +99,12 @@ const Home = () => {
     router.push('/usuario');
   };
 
+  // 🔹 Clique em uma categoria → navega para /categoria/[slug]
+  const handleCategoryClick = (category) => {
+    if (!category?.slug) return;
+    router.push(`/categoria/${category.slug}`);
+  };
+
   return (
     <div className={styles.container}>
       <Header />
@@ -172,6 +178,7 @@ const Home = () => {
                     <button
                       type="button"
                       className={styles.categoryButton}
+                      onClick={() => handleCategoryClick(pair.left)}
                     >
                       <img
                         src={pair.left.src}
@@ -188,6 +195,7 @@ const Home = () => {
                     <button
                       type="button"
                       className={styles.categoryButton}
+                      onClick={() => handleCategoryClick(pair.right)}
                     >
                       <img
                         src={pair.right.src}
@@ -220,6 +228,7 @@ const Home = () => {
               <button
                 type="button"
                 className={styles.categoryButton}
+                onClick={() => handleCategoryClick(category)}
               >
                 <img
                   src={category.src}
