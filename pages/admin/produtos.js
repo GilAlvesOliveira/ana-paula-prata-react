@@ -1,27 +1,27 @@
-// pages/admin/produtos.js
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import styles from '../../styles/AdminProdutos.module.css';
-import { getToken, getUser } from '../../services/storage';
 import {
-  getProdutos,
-  createProduto,
-  updateProduto,
-  deleteProduto,
+  getProdutosApi,
+  createProdutoApi,
+  updateProdutoApi,
+  deleteProdutoApi,
 } from '../../services/api';
+import { getUser } from '../../services/storage';
 
-export default function AdminProdutosPage() {
+const AdminProdutosPage = () => {
   const router = useRouter();
 
-  const [isAuthorized, setIsAuthorized] = useState(false);
   const [produtos, setProdutos] = useState([]);
+  const [loadingProdutos, setLoadingProdutos] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
   const [showForm, setShowForm] = useState(false);
-  const [editandoId, setEditandoId] = useState(null);
+  const [editingProdutoId, setEditingProdutoId] = useState(null);
 
-  // Campos do formulário
   const [codigo, setCodigo] = useState('');
   const [nome, setNome] = useState('');
   const [descricao, setDescricao] = useState('');
@@ -34,56 +34,35 @@ export default function AdminProdutosPage() {
   const [largura, setLargura] = useState('');
   const [altura, setAltura] = useState('');
   const [comprimento, setComprimento] = useState('');
-  const [imagemFile, setImagemFile] = useState(null);
-  const [imagemPreview, setImagemPreview] = useState(null);
 
-  const [loading, setLoading] = useState(false);
-  const [loadingProdutos, setLoadingProdutos] = useState(false);
-  const [erro, setErro] = useState('');
-  const [mensagem, setMensagem] = useState('');
+  const [imagemPreview, setImagemPreview] = useState('');
+  const [novaImagem, setNovaImagem] = useState(null);
 
-  // Modal de exclusão
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [produtoParaExcluir, setProdutoParaExcluir] = useState(null);
 
-  // Checa se é admin e carrega produtos
   useEffect(() => {
-    const token = getToken();
-    const usuario = getUser();
-
-    if (!token || !usuario || usuario.role !== 'admin') {
+    const user = getUser();
+    if (!user || user.role !== 'admin') {
       router.push('/');
-      return;
     }
-
-    setIsAuthorized(true);
-    carregarProdutos();
   }, [router]);
 
-  const carregarProdutos = async () => {
-    try {
-      setLoadingProdutos(true);
-      const lista = await getProdutos();
-      setProdutos(lista || []);
-    } catch (e) {
-      console.error('Erro ao carregar produtos:', e);
-      setErro(e.message || 'Erro ao carregar produtos.');
-    } finally {
-      setLoadingProdutos(false);
-    }
-  };
+  useEffect(() => {
+    const carregarProdutos = async () => {
+      try {
+        setLoadingProdutos(true);
+        const lista = await getProdutosApi();
+        setProdutos(lista || []);
+      } catch (e) {
+        console.error('Erro ao carregar produtos:', e);
+        setErrorMsg(e.message || 'Erro ao carregar produtos.');
+      } finally {
+        setLoadingProdutos(false);
+      }
+    };
 
-  const handleImagemChange = (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) {
-      setImagemFile(null);
-      setImagemPreview(null);
-      return;
-    }
-    setImagemFile(file);
-    const previewUrl = URL.createObjectURL(file);
-    setImagemPreview(previewUrl);
-  };
+    carregarProdutos();
+  }, []);
 
   const limparFormulario = () => {
     setCodigo('');
@@ -98,12 +77,92 @@ export default function AdminProdutosPage() {
     setLargura('');
     setAltura('');
     setComprimento('');
-    setImagemFile(null);
-    setImagemPreview(null);
-    setEditandoId(null);
+    setImagemPreview('');
+    setNovaImagem(null);
+    setEditingProdutoId(null);
   };
 
-  const preencherFormularioParaEdicao = (produto) => {
+  const handleNovoProdutoClick = () => {
+    limparFormulario();
+    setErrorMsg('');
+    setSuccessMsg('');
+    setShowForm(true);
+  };
+
+  const handleCancelarForm = () => {
+    limparFormulario();
+    setShowForm(false);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNovaImagem(file);
+      const previewUrl = URL.createObjectURL(file);
+      setImagemPreview(previewUrl);
+    }
+  };
+
+  const recarregarProdutos = async () => {
+    try {
+      setLoadingProdutos(true);
+      const lista = await getProdutosApi();
+      setProdutos(lista || []);
+    } catch (e) {
+      console.error('Erro ao recarregar produtos:', e);
+      setErrorMsg(e.message || 'Erro ao recarregar produtos.');
+    } finally {
+      setLoadingProdutos(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMsg('');
+    setSuccessMsg('');
+
+    try {
+      const formData = new FormData();
+      formData.append('codigo', codigo);
+      formData.append('nome', nome);
+      formData.append('descricao', descricao);
+      formData.append('preco', preco || '0');
+      formData.append('estoque', estoque || '0');
+      formData.append('categoria', categoria);
+      formData.append('cor', cor);
+      formData.append('modelo', modelo);
+      formData.append('peso', peso || '0');
+      formData.append('largura', largura || '0');
+      formData.append('altura', altura || '0');
+      formData.append('comprimento', comprimento || '0');
+
+      if (novaImagem) {
+        formData.append('file', novaImagem);
+      }
+
+      if (editingProdutoId) {
+        await updateProdutoApi(editingProdutoId, formData);
+        setSuccessMsg('Produto atualizado com sucesso!');
+      } else {
+        await createProdutoApi(formData);
+        setSuccessMsg('Produto criado com sucesso!');
+      }
+
+      await recarregarProdutos();
+      limparFormulario();
+      setShowForm(false);
+    } catch (e) {
+      console.error('Erro ao salvar produto:', e);
+      setErrorMsg(e.message || 'Erro ao salvar produto.');
+    }
+  };
+
+  const handleEditarProduto = (produto) => {
+    setErrorMsg('');
+    setSuccessMsg('');
+    setShowForm(true);
+    setEditingProdutoId(produto._id || null);
+
     setCodigo(produto.codigo || '');
     setNome(produto.nome || '');
     setDescricao(produto.descricao || '');
@@ -116,151 +175,34 @@ export default function AdminProdutosPage() {
     setLargura(produto.largura != null ? String(produto.largura) : '');
     setAltura(produto.altura != null ? String(produto.altura) : '');
     setComprimento(produto.comprimento != null ? String(produto.comprimento) : '');
-    setImagemFile(null);
-    setImagemPreview(produto.imagem || null);
+    setImagemPreview(produto.imagem || '');
+    setNovaImagem(null);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErro('');
-    setMensagem('');
-
-    const token = getToken();
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    // Validação simples no front
-    if (
-      !codigo ||
-      !nome ||
-      !descricao ||
-      !preco ||
-      !estoque ||
-      !categoria ||
-      !cor ||
-      !modelo ||
-      !peso ||
-      !largura ||
-      !altura ||
-      !comprimento
-    ) {
-      setErro('Preencha todos os campos obrigatórios.');
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const formData = new FormData();
-      formData.append('codigo', codigo);
-      formData.append('nome', nome);
-      formData.append('descricao', descricao);
-      formData.append('preco', String(preco).replace(',', '.'));
-      formData.append('estoque', String(estoque));
-      formData.append('categoria', categoria);
-      formData.append('cor', cor);
-      formData.append('modelo', modelo);
-      formData.append('peso', String(peso).replace(',', '.'));
-      formData.append('largura', String(largura).replace(',', '.'));
-      formData.append('altura', String(altura).replace(',', '.'));
-      formData.append('comprimento', String(comprimento).replace(',', '.'));
-
-      if (imagemFile) {
-        formData.append('file', imagemFile);
-      }
-
-      if (editandoId) {
-        await updateProduto(editandoId, formData, token);
-        setMensagem('Produto atualizado com sucesso!');
-      } else {
-        await createProduto(formData, token);
-        setMensagem('Produto criado com sucesso!');
-      }
-
-      limparFormulario();
-      setShowForm(false);
-      await carregarProdutos();
-    } catch (e) {
-      console.error('Erro ao salvar produto:', e);
-      setErro(e.message || 'Erro ao salvar produto.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleClickNovoProduto = () => {
-    if (!showForm || editandoId) {
-      // Abrir formulário em modo "novo"
-      limparFormulario();
-      setErro('');
-      setMensagem('');
-      setShowForm(true);
-    } else {
-      // Se já estiver em "novo" aberto, fecha
-      limparFormulario();
-      setShowForm(false);
-    }
-  };
-
-  const handleEditarProduto = (produto) => {
-    setErro('');
-    setMensagem('');
-    setEditandoId(produto._id);
-    preencherFormularioParaEdicao(produto);
-    setShowForm(true);
-  };
-
-  const abrirModalExcluir = (produto) => {
+  const handleExcluirClick = (produto) => {
     setProdutoParaExcluir(produto);
-    setShowDeleteModal(true);
-    setErro('');
-    setMensagem('');
   };
 
-  const fecharModalExcluir = () => {
-    setShowDeleteModal(false);
+  const handleCancelarExclusao = () => {
     setProdutoParaExcluir(null);
   };
 
-  const confirmarExclusao = async () => {
+  const handleConfirmarExclusao = async () => {
     if (!produtoParaExcluir) return;
 
-    const token = getToken();
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
     try {
-      setLoading(true);
-      await deleteProduto(produtoParaExcluir._id, token);
-      setMensagem('Produto excluído com sucesso.');
-      fecharModalExcluir();
-      await carregarProdutos();
+      setErrorMsg('');
+      setSuccessMsg('');
+      await deleteProdutoApi(produtoParaExcluir._id);
+      setSuccessMsg('Produto excluído com sucesso!');
+      await recarregarProdutos();
     } catch (e) {
       console.error('Erro ao excluir produto:', e);
-      setErro(e.message || 'Erro ao excluir produto.');
+      setErrorMsg(e.message || 'Erro ao excluir produto.');
     } finally {
-      setLoading(false);
+      setProdutoParaExcluir(null);
     }
   };
-
-  if (!isAuthorized) {
-    // Enquanto verifica / redireciona
-    return (
-      <div className={styles.pageContainer}>
-        <Header />
-        <main className={styles.main}>
-          <div className={styles.card}>
-            <p>Verificando permissões...</p>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
 
   return (
     <div className={styles.pageContainer}>
@@ -270,31 +212,26 @@ export default function AdminProdutosPage() {
         <div className={styles.card}>
           <div className={styles.headerRow}>
             <div>
-              <h1 className={styles.title}>Admin - Produtos</h1>
+              <h1 className={styles.title}>Produtos</h1>
               <p className={styles.subtitle}>
-                Gerencie o catálogo de produtos da loja.
+                Gerencie o catálogo da loja: cadastre, edite e remova produtos.
               </p>
             </div>
 
             <button
               type="button"
               className={styles.newProductButton}
-              onClick={handleClickNovoProduto}
+              onClick={handleNovoProdutoClick}
             >
-              {showForm
-                ? editandoId
-                  ? 'Cancelar edição'
-                  : 'Cancelar'
-                : 'Novo Produto'}
+              Novo produto
             </button>
           </div>
 
-          {/* Formulário de novo produto / edição */}
           {showForm && (
             <form className={styles.form} onSubmit={handleSubmit}>
               <div className={styles.formGrid}>
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Código *</label>
+                  <label className={styles.label}>Código</label>
                   <input
                     type="text"
                     className={styles.input}
@@ -305,89 +242,88 @@ export default function AdminProdutosPage() {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Nome *</label>
+                  <label className={styles.label}>Nome</label>
                   <input
                     type="text"
                     className={styles.input}
                     value={nome}
                     onChange={(e) => setNome(e.target.value)}
+                    placeholder="Nome do produto"
                   />
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Categoria *</label>
+                  <label className={styles.label}>Categoria</label>
                   <input
                     type="text"
                     className={styles.input}
                     value={categoria}
                     onChange={(e) => setCategoria(e.target.value)}
-                    placeholder="Pulseira, anel, brinco..."
+                    placeholder="Ex: Pulseiras, Anéis..."
                   />
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Cor *</label>
+                  <label className={styles.label}>Cor</label>
                   <input
                     type="text"
                     className={styles.input}
                     value={cor}
                     onChange={(e) => setCor(e.target.value)}
-                    placeholder="Prata, prata envelhecida..."
+                    placeholder="Ex: Prata, Dourado..."
                   />
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Modelo *</label>
+                  <label className={styles.label}>Modelo</label>
                   <input
                     type="text"
                     className={styles.input}
                     value={modelo}
                     onChange={(e) => setModelo(e.target.value)}
-                    placeholder="Ex: AP-1234"
+                    placeholder="Ex: Coração, Elos..."
                   />
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Preço (R$) *</label>
+                  <label className={styles.label}>Preço (R$)</label>
                   <input
                     type="number"
-                    min="0"
                     step="0.01"
                     className={styles.input}
                     value={preco}
                     onChange={(e) => setPreco(e.target.value)}
+                    placeholder="Ex: 129.90"
                   />
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Estoque *</label>
+                  <label className={styles.label}>Estoque</label>
                   <input
                     type="number"
-                    min="0"
                     className={styles.input}
                     value={estoque}
                     onChange={(e) => setEstoque(e.target.value)}
+                    placeholder="Quantidade em estoque"
                   />
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Peso (kg) *</label>
+                  <label className={styles.label}>Peso (kg)</label>
                   <input
                     type="number"
-                    min="0"
-                    step="0.01"
+                    step="0.001"
                     className={styles.input}
                     value={peso}
                     onChange={(e) => setPeso(e.target.value)}
+                    placeholder="Ex: 0.050"
                   />
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Largura (cm) *</label>
+                  <label className={styles.label}>Largura (cm)</label>
                   <input
                     type="number"
-                    min="0"
-                    step="0.01"
                     className={styles.input}
                     value={largura}
                     onChange={(e) => setLargura(e.target.value)}
@@ -395,11 +331,9 @@ export default function AdminProdutosPage() {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Altura (cm) *</label>
+                  <label className={styles.label}>Altura (cm)</label>
                   <input
                     type="number"
-                    min="0"
-                    step="0.01"
                     className={styles.input}
                     value={altura}
                     onChange={(e) => setAltura(e.target.value)}
@@ -407,11 +341,9 @@ export default function AdminProdutosPage() {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Comprimento (cm) *</label>
+                  <label className={styles.label}>Comprimento (cm)</label>
                   <input
                     type="number"
-                    min="0"
-                    step="0.01"
                     className={styles.input}
                     value={comprimento}
                     onChange={(e) => setComprimento(e.target.value)}
@@ -419,62 +351,48 @@ export default function AdminProdutosPage() {
                 </div>
               </div>
 
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Descrição *</label>
+              <div className={styles.formGroup} style={{ marginTop: 10 }}>
+                <label className={styles.label}>Descrição</label>
                 <textarea
                   className={styles.textarea}
-                  rows={3}
                   value={descricao}
                   onChange={(e) => setDescricao(e.target.value)}
+                  placeholder="Descrição detalhada do produto"
                 />
               </div>
 
               <div className={styles.imagemRow}>
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Imagem (opcional)</label>
+                  <label className={styles.label}>Imagem</label>
                   <input
                     type="file"
                     accept="image/*"
                     className={styles.fileInput}
-                    onChange={handleImagemChange}
+                    onChange={handleFileChange}
                   />
                 </div>
-
                 {imagemPreview && (
                   <div className={styles.imagemPreviewWrapper}>
                     <img
                       src={imagemPreview}
-                      alt="Pré-visualização"
+                      alt="Prévia"
                       className={styles.imagemPreview}
                     />
                   </div>
                 )}
               </div>
 
-              {erro && <p className={styles.errorText}>{erro}</p>}
-              {mensagem && <p className={styles.successText}>{mensagem}</p>}
+              {errorMsg && <p className={styles.errorText}>{errorMsg}</p>}
+              {successMsg && <p className={styles.successText}>{successMsg}</p>}
 
               <div className={styles.formButtonsRow}>
-                <button
-                  type="submit"
-                  className={styles.saveButton}
-                  disabled={loading}
-                >
-                  {loading
-                    ? 'Salvando...'
-                    : editandoId
-                    ? 'Atualizar produto'
-                    : 'Salvar produto'}
+                <button type="submit" className={styles.saveButton}>
+                  {editingProdutoId ? 'Salvar alterações' : 'Cadastrar produto'}
                 </button>
-
                 <button
                   type="button"
                   className={styles.cancelButton}
-                  onClick={() => {
-                    limparFormulario();
-                    setShowForm(false);
-                  }}
-                  disabled={loading}
+                  onClick={handleCancelarForm}
                 >
                   Cancelar
                 </button>
@@ -482,35 +400,35 @@ export default function AdminProdutosPage() {
             </form>
           )}
 
-          {/* Lista de produtos cadastrados */}
-          <div className={styles.listaSection}>
+          <section className={styles.listaSection}>
             <h2 className={styles.sectionTitle}>Produtos cadastrados</h2>
 
-            {loadingProdutos ? (
-              <p className={styles.infoText}>Carregando produtos...</p>
-            ) : produtos.length === 0 ? (
+            {loadingProdutos && <p className={styles.infoText}>Carregando produtos...</p>}
+
+            {!loadingProdutos && produtos.length === 0 && (
               <p className={styles.infoText}>
-                Nenhum produto cadastrado ainda.
+                Nenhum produto cadastrado até o momento.
               </p>
-            ) : (
+            )}
+
+            {!loadingProdutos && produtos.length > 0 && (
               <div className={styles.listaTabela}>
-                {/* Cabeçalho (desktop) */}
                 <div className={`${styles.listaLinha} ${styles.listaHeader}`}>
-                  <span>Imagem</span>
-                  <span>Código</span>
+                  <span className={styles.colImagem}>Imagem</span>
+                  <span className={styles.colCodigo}>Código</span>
                   <span>Produto</span>
                   <span>Preço</span>
                   <span>Estoque</span>
-                  <span>Ações</span>
+                  <span className={styles.colAcoes}>Ações</span>
                 </div>
 
-                {produtos.map((p) => (
-                  <div key={p._id} className={styles.listaLinha}>
+                {produtos.map((produto) => (
+                  <div key={produto._id} className={styles.listaLinha}>
                     <span className={styles.colImagem}>
-                      {p.imagem ? (
+                      {produto.imagem ? (
                         <img
-                          src={p.imagem}
-                          alt={p.nome}
+                          src={produto.imagem}
+                          alt={produto.nome}
                           className={styles.listaImagem}
                         />
                       ) : (
@@ -518,26 +436,33 @@ export default function AdminProdutosPage() {
                       )}
                     </span>
 
-                    <span className={styles.colCodigo}>{p.codigo}</span>
+                    <span className={styles.colCodigo}>
+                      {produto.codigo || '—'}
+                    </span>
 
-                    <span className={styles.colNome}>{p.nome}</span>
+                    <span className={styles.colNome}>{produto.nome}</span>
 
-                    <span>R$ {Number(p.preco || 0).toFixed(2)}</span>
+                    <span>
+                      {produto.preco != null
+                        ? `R$ ${Number(produto.preco).toFixed(2)}`
+                        : '—'}
+                    </span>
 
-                    <span>{p.estoque}</span>
+                    <span>{produto.estoque != null ? produto.estoque : '—'}</span>
 
                     <span className={styles.colAcoes}>
                       <button
                         type="button"
                         className={styles.acaoButton}
-                        onClick={() => handleEditarProduto(p)}
+                        onClick={() => handleEditarProduto(produto)}
                       >
                         Editar
                       </button>
+
                       <button
                         type="button"
                         className={`${styles.acaoButton} ${styles.acaoExcluir}`}
-                        onClick={() => abrirModalExcluir(p)}
+                        onClick={() => handleExcluirClick(produto)}
                       >
                         Excluir
                       </button>
@@ -546,41 +471,41 @@ export default function AdminProdutosPage() {
                 ))}
               </div>
             )}
-          </div>
+          </section>
         </div>
       </main>
 
       <Footer />
 
-      {/* MODAL DE CONFIRMAÇÃO DE EXCLUSÃO */}
-      {showDeleteModal && produtoParaExcluir && (
+      {produtoParaExcluir && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
             <h3 className={styles.modalTitle}>Excluir produto</h3>
             <p className={styles.modalText}>
-              Tem certeza que deseja excluir o produto{' '}
-              <strong>{produtoParaExcluir.nome}</strong>?
+              Tem certeza que deseja excluir o produto:
             </p>
             <p className={styles.modalTextSmall}>
-              Esta ação não poderá ser desfeita.
+              <strong>
+                {produtoParaExcluir.codigo
+                  ? `${produtoParaExcluir.codigo} - `
+                  : ''}
+                {produtoParaExcluir.nome}
+              </strong>
             </p>
-
             <div className={styles.modalButtonsRow}>
               <button
                 type="button"
                 className={styles.modalCancelButton}
-                onClick={fecharModalExcluir}
-                disabled={loading}
+                onClick={handleCancelarExclusao}
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 className={styles.modalConfirmButton}
-                onClick={confirmarExclusao}
-                disabled={loading}
+                onClick={handleConfirmarExclusao}
               >
-                {loading ? 'Excluindo...' : 'Sim, excluir'}
+                Excluir
               </button>
             </div>
           </div>
@@ -588,4 +513,6 @@ export default function AdminProdutosPage() {
       )}
     </div>
   );
-}
+};
+
+export default AdminProdutosPage;
