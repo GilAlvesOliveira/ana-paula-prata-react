@@ -5,6 +5,22 @@
   background-color: #000;
 }
 
+/* Banner de aviso de cadastro incompleto */
+.profileBanner {
+  width: 100%;
+  background: #2b2105;
+  color: #ffe9a6;
+  padding: 10px 16px;
+  text-align: center;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+}
+
+.profileBanner span strong {
+  text-decoration: underline;
+}
+
 /* ÁREA HERO - FUNDO PRETO POR CAUSA DO LOGO */
 .content {
   display: flex;

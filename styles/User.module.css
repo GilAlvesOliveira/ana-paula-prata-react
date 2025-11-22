@@ -1,0 +1,300 @@
+/* ===== CONTAINER GERAL DA PÁGINA ===== */
+
+.pageContainer {
+  width: 100%;
+  min-height: 100vh;
+  background: #000;
+  color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== MAIN ===== */
+
+.main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px 40px;
+}
+
+/* ===== CARD ===== */
+
+.card {
+  width: 100%;
+  max-width: 520px;
+  background: rgba(10, 10, 10, 0.9);
+  border: 1px solid rgba(180, 180, 180, 0.25);
+  border-radius: 18px;
+  padding: 30px 24px 34px;
+  box-shadow: 0 0 26px rgba(0, 0, 0, 0.7);
+  box-sizing: border-box;
+}
+
+/* ===== AVATAR E TOPO ===== */
+
+.avatarSection {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.avatarWrapper {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #444;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.userName {
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 4px;
+  color: #ffffff;
+}
+
+.userEmail {
+  font-size: 14px;
+  color: #bdbdbd;
+  margin-top: 2px;
+}
+
+/* Botão de trocar avatar (apenas modo edição) */
+.avatarButton {
+  margin-top: 10px;
+  display: inline-block;
+  font-size: 13px;
+  cursor: pointer;
+  color: #d2d2d2;
+  text-decoration: underline;
+}
+
+.avatarButton input {
+  display: none;
+}
+
+/* ===== MODO ESTÁTICO ===== */
+
+.staticSection {
+  margin-top: 24px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #e6e6e6;
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(150,150,150,0.15);
+}
+
+.infoLabel {
+  font-size: 14px;
+  color: #c1c1c1;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.infoValue {
+  font-size: 14px;
+  color: #f5f5f5;
+  text-align: right;
+}
+
+/* ===== BOTÕES ===== */
+
+.editButton {
+  width: 100%;
+  padding: 12px;
+  background: #f5f5f5;
+  color: #000;
+  border: none;
+  border-radius: 999px;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  margin-top: 22px;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.editButton:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+/* 🔹 Botão secundário – MINHAS COMPRAS */
+
+.secondaryButton {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border-radius: 999px;
+  border: 1px solid #777;
+  color: #f1f1f1;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  margin-top: 14px;
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.secondaryButton:hover {
+  border-color: #ffffff;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* ===== MODO EDIÇÃO ===== */
+
+.form {
+  margin-top: 20px;
+}
+
+.formGroup {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 13px;
+  color: #d8d8d8;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.input {
+  padding: 12px 16px;
+  background: #111;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 12px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: #c0c0c0;
+}
+
+/* ===== BOTÕES DO MODO EDIÇÃO ===== */
+
+.buttonsRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.saveButton {
+  flex: 1;
+  padding: 12px;
+  background: #f5f5f5;
+  color: #000;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  transition: opacity 0.2s ease;
+}
+
+.saveButton:hover {
+  opacity: 0.85;
+}
+
+.cancelButton {
+  flex: 1;
+  padding: 12px;
+  background: #333;
+  border: 1px solid #777;
+  color: #e5e5e5;
+  border-radius: 999px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.cancelButton:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+/* ===== MENSAGENS ===== */
+
+.errorText {
+  color: #ff8a8a;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.successText {
+  color: #9be29b;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+/* ===== LOADING ===== */
+
+.loadingContainer {
+  min-height: 100vh;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+}
+
+.loadingContent {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #cfcfcf;
+  font-size: 18px;
+}
+
+/* ===== MOBILE ===== */
+
+@media (max-width: 480px) {
+  .card {
+    padding: 24px 16px 26px;
+  }
+
+  .userName {
+    font-size: 18px;
+  }
+
+  .sectionTitle {
+    font-size: 16px;
+  }
+
+  .input {
+    font-size: 14px;
+  }
+}

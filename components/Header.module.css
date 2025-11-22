@@ -45,6 +45,7 @@
   flex-grow: 1;
   text-align: center;
   letter-spacing: 0.18em;
+  cursor: pointer; /* agora clicável */
 }
 
 /* Container para avatar, sacola e nome */
@@ -79,8 +80,15 @@
   align-items: center;
 }
 
-/* Avatar + sacola */
-.avatar,
+/* Avatar redondo */
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Sacola */
 .sacola {
   width: 25px;
   height: 25px;
@@ -166,7 +174,11 @@
     font-size: 14px;
   }
 
-  .avatar,
+  .avatar {
+    width: 32px;
+    height: 32px;
+  }
+
   .sacola {
     width: 30px;
     height: 30px;
@@ -219,7 +231,11 @@
     font-size: 20px;
   }
 
-  .avatar,
+  .avatar {
+    width: 32px;
+    height: 32px;
+  }
+
   .sacola {
     width: 28px;
     height: 28px;

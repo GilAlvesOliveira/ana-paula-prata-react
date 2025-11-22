@@ -50,11 +50,21 @@ export async function forgotPassword(email) {
   return apiRequest('/api/auth/forgot-password', 'POST', { email });
 }
 
-// 🔹 Redefinir senha (usa token + email + novaSenha)
+// Redefinir senha (usa token + email + novaSenha)
 export async function resetPassword({ email, token, novaSenha }) {
   return apiRequest('/api/auth/reset-password', 'POST', {
     email,
     token,
     novaSenha,
   });
+}
+
+// 🔹 Buscar dados completos do usuário logado (GET /api/usuario/usuario)
+export async function getUsuarioApi(token) {
+  return apiRequest('/api/usuario/usuario', 'GET', null, token);
+}
+
+// 🔹 Atualizar dados do usuário (PUT /api/usuario/usuario, com FormData)
+export async function updateUsuarioApi(formData, token) {
+  return apiRequest('/api/usuario/usuario', 'PUT', formData, token);
 }

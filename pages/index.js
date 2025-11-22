@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/Home.module.css';
+import { getUser } from '../services/storage';
 
 const Home = () => {
+  const router = useRouter();
+
   const categories = [
     { id: 0, src: '/imagens/pulseiras.webp', label: 'PULSEIRAS' },
     { id: 1, src: '/imagens/aneis.webp', label: 'ANÉIS' },
@@ -25,9 +29,22 @@ const Home = () => {
     pairs[0],
   ];
 
-  // Começa no índice 1 (primeiro slide "real")
   const [currentIndex, setCurrentIndex] = useState(1);
   const [isTransitionEnabled, setIsTransitionEnabled] = useState(true);
+
+  const [precisaCompletarCadastro, setPrecisaCompletarCadastro] = useState(false);
+
+  useEffect(() => {
+    const usuario = getUser();
+    if (usuario) {
+      const faltandoDados =
+        !usuario.telefone || !usuario.endereco || !usuario.cep;
+
+      setPrecisaCompletarCadastro(faltandoDados);
+    } else {
+      setPrecisaCompletarCadastro(false);
+    }
+  }, []);
 
   const moveRight = () => {
     setIsTransitionEnabled(true);
@@ -40,21 +57,32 @@ const Home = () => {
   };
 
   const handleTransitionEnd = () => {
-    // Se chegar no clone do primeiro (última posição), volta silenciosamente pro primeiro real
     if (currentIndex === extendedPairs.length - 1) {
       setIsTransitionEnabled(false);
       setCurrentIndex(1);
     }
-    // Se chegar no clone do último (posição 0), volta silenciosamente pro último real
     if (currentIndex === 0) {
       setIsTransitionEnabled(false);
       setCurrentIndex(extendedPairs.length - 2);
     }
   };
 
+  const handleBannerClick = () => {
+    router.push('/usuario');
+  };
+
   return (
     <div className={styles.container}>
       <Header />
+
+      {precisaCompletarCadastro && (
+        <div className={styles.profileBanner} onClick={handleBannerClick}>
+          <span>
+            Seu cadastro está incompleto. <strong>Clique aqui</strong> para atualizar
+            seus dados (endereço, telefone e CEP).
+          </span>
+        </div>
+      )}
 
       {/* HERO COM LOGO DA LOJA */}
       <div className={styles.content}>
@@ -172,7 +200,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* FOOTER */}
       <Footer />
     </div>
   );

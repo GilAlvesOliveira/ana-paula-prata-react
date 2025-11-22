@@ -1,3 +1,4 @@
+// components/Header.js
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import styles from './Header.module.css';
@@ -16,11 +17,6 @@ const Header = () => {
     }
   }, []);
 
-  const handleLoginRedirect = () => {
-    router.push('/login');
-    setIsMenuOpen(false);
-  };
-
   const handleOpenMenu = () => {
     setIsMenuOpen(true);
   };
@@ -29,9 +25,24 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
-  // Clique no avatar (topo) – por enquanto leva pro login/minha conta
-  const handleAvatarClick = () => {
+  const handleLoginRedirect = () => {
     router.push('/login');
+    setIsMenuOpen(false);
+  };
+
+  // Clique no logo de texto "ANA PAULA PRATAS" → sempre home
+  const handleLogoClick = () => {
+    router.push('/');
+    setIsMenuOpen(false);
+  };
+
+  // Clique no avatar (topo) → página do usuário se logado, senão login
+  const handleAvatarClick = () => {
+    if (usuario) {
+      router.push('/usuario');
+    } else {
+      router.push('/login');
+    }
   };
 
   const handleLogout = () => {
@@ -46,17 +57,37 @@ const Header = () => {
       ? usuario.nome.split(' ')[0]
       : null;
 
-  // Clique no botão "Olá, {nome}" dentro do menu lateral
+  // Botão "Olá, {nome}" dentro do menu lateral
+  // se logado → home
+  // se não logado → login
   const handleMenuUserClick = () => {
     if (usuario) {
-      // se estiver logado → vai pra home
       router.push('/');
       setIsMenuOpen(false);
     } else {
-      // se não estiver logado → vai pra login
       router.push('/login');
       setIsMenuOpen(false);
     }
+  };
+
+  // "Minha Conta" no menu lateral → /usuario
+  const handleMinhaContaClick = () => {
+    if (usuario) {
+      router.push('/usuario');
+    } else {
+      router.push('/login');
+    }
+    setIsMenuOpen(false);
+  };
+
+  // 🔹 Novo: "Minhas Compras" no menu lateral → /minhas-compras
+  const handleMinhasComprasClick = () => {
+    if (usuario) {
+      router.push('/minhas-compras');
+    } else {
+      router.push('/login');
+    }
+    setIsMenuOpen(false);
   };
 
   return (
@@ -72,7 +103,10 @@ const Header = () => {
             <img src="/imagens/menu.png" alt="Menu" className={styles.menu} />
           </button>
 
-          <div className={styles.logoText}>
+          <div
+            className={styles.logoText}
+            onClick={handleLogoClick}
+          >
             ANA PAULA PRATAS
           </div>
 
@@ -194,9 +228,21 @@ const Header = () => {
 
             {/* Links extras + SAIR */}
             <div className={styles.menuExtraLinks}>
-              <button type="button">
+              <button
+                type="button"
+                onClick={handleMinhaContaClick}
+              >
                 Minha Conta
               </button>
+
+              {/* 🔹 Novo botão */}
+              <button
+                type="button"
+                onClick={handleMinhasComprasClick}
+              >
+                Minhas Compras
+              </button>
+
               <button type="button">
                 Sobre nós
               </button>
