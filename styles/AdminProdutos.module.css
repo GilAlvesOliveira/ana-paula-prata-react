@@ -524,3 +524,38 @@
     margin: 0 16px;
   }
 }
+
+/* ===== MODAL VISUALIZAR IMAGEM ===== */
+
+.modalImgBox {
+  background: #111;
+  padding: 10px;
+  border-radius: 12px;
+  position: relative;
+  max-width: 85vw;
+  max-height: 85vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalImg {
+  max-width: 80vw;
+  max-height: 70vh;
+  border-radius: 10px;
+}
+
+.modalImgClose {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #fff;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: bold;
+  color: #000;
+}

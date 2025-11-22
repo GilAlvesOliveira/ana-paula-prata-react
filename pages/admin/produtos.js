@@ -40,6 +40,17 @@ const AdminProdutosPage = () => {
 
   const [produtoParaExcluir, setProdutoParaExcluir] = useState(null);
 
+  // NOVO: imagem ampliada
+  const [imagemAmpliada, setImagemAmpliada] = useState(null);
+
+  const abrirImagem = (url) => {
+    setImagemAmpliada(url);
+  };
+
+  const fecharImagem = () => {
+    setImagemAmpliada(null);
+  };
+
   useEffect(() => {
     const user = getUser();
     if (!user || user.role !== 'admin') {
@@ -430,6 +441,8 @@ const AdminProdutosPage = () => {
                           src={produto.imagem}
                           alt={produto.nome}
                           className={styles.listaImagem}
+                          onClick={() => abrirImagem(produto.imagem)}
+                          style={{ cursor: 'pointer' }}
                         />
                       ) : (
                         <span className={styles.noImage}>Sem imagem</span>
@@ -508,6 +521,30 @@ const AdminProdutosPage = () => {
                 Excluir
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL VISUALIZAR IMAGEM */}
+      {imagemAmpliada && (
+        <div className={styles.modalOverlay} onClick={fecharImagem}>
+          <div
+            className={styles.modalImgBox}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className={styles.modalImgClose}
+              onClick={fecharImagem}
+            >
+              ✕
+            </button>
+
+            <img
+              src={imagemAmpliada}
+              alt="Imagem ampliada"
+              className={styles.modalImg}
+            />
           </div>
         </div>
       )}
