@@ -1,3 +1,4 @@
+// pages/register.js
 import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/Register.module.css';
@@ -12,6 +13,10 @@ export default function Register() {
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
 
+  // 👇 novo estado para imagem
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
@@ -24,8 +29,22 @@ export default function Register() {
     if (!nome || !email || !senha || !confirmarSenha) return false;
     if (senha.length < 4) return false;
     if (senha !== confirmarSenha) return false;
+    // imagem não é obrigatória
     return true;
   }, [nome, email, senha, confirmarSenha]);
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) {
+      setAvatarFile(null);
+      setAvatarPreview(null);
+      return;
+    }
+
+    setAvatarFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarPreview(previewUrl);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,6 +63,11 @@ export default function Register() {
       formData.append('nome', nome);
       formData.append('email', email);
       formData.append('senha', senha);
+
+      // 👇 se tiver imagem, manda como "file" (multer espera esse nome)
+      if (avatarFile) {
+        formData.append('file', avatarFile);
+      }
 
       // 1) Cadastra usuário
       await registerUser(formData);
@@ -84,6 +108,31 @@ export default function Register() {
         <p className={styles.subtitle}>
           Preencha os dados para criar sua conta
         </p>
+
+        {/* 👇 bloco de upload de imagem */}
+        <div className={styles.imageUploadContainer}>
+          <label className={styles.imageLabel}>Foto de perfil (opcional)</label>
+          <div className={styles.imageRow}>
+            <label className={styles.imageInputButton}>
+              Escolher imagem
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+              />
+            </label>
+
+            {avatarPreview && (
+              <div className={styles.imagePreviewWrapper}>
+                <img
+                  src={avatarPreview}
+                  alt="Pré-visualização do avatar"
+                  className={styles.imagePreview}
+                />
+              </div>
+            )}
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
