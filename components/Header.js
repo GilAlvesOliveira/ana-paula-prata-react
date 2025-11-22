@@ -9,6 +9,9 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [usuario, setUsuario] = useState(null);
 
+  // 🔹 estado do campo de busca
+  const [searchTerm, setSearchTerm] = useState('');
+
   useEffect(() => {
     const user = getUser();
     if (user) {
@@ -115,6 +118,23 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
+  // 🔎 Executar busca (enter ou clique na lupa)
+  const executarBusca = () => {
+    const termo = searchTerm.trim();
+    if (!termo) return;
+
+    router.push(`/categoria/buscar?q=${encodeURIComponent(termo)}`);
+    setIsMenuOpen(false);
+  };
+
+  // Enter no input
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      executarBusca();
+    }
+  };
+
   return (
     <>
       <header className={styles.header}>
@@ -176,8 +196,16 @@ const Header = () => {
               type="text"
               className={styles.searchInput}
               placeholder="Buscar joias..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
             />
-            <img src="/imagens/lupa.png" alt="Lupa" className={styles.lupa} />
+            <img
+              src="/imagens/lupa.png"
+              alt="Lupa"
+              className={styles.lupa}
+              onClick={executarBusca}
+            />
           </div>
 
           <img

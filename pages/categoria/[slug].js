@@ -8,7 +8,7 @@ import { buscarProdutosApi, getProdutosApi } from '../../services/api';
 
 const CategoriaPage = () => {
   const router = useRouter();
-  const { slug } = router.query;
+  const { slug, q } = router.query;
 
   const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,9 @@ const CategoriaPage = () => {
 
   const [imagemAmpliada, setImagemAmpliada] = useState(null);
 
-  // Mapeia slug para um nome bonitinho para título e busca
+  const termoBusca = typeof q === 'string' ? q : '';
+
+  // Mapeia slug para um nome bonitinho para título
   const getCategoriaNome = (s) => {
     switch (s) {
       case 'pulseiras':
@@ -29,6 +31,8 @@ const CategoriaPage = () => {
         return 'Pingentes';
       case 'joias':
         return 'Joias';
+      case 'buscar':
+        return 'Resultados da busca';
       default:
         if (!s) return '';
         return s.charAt(0).toUpperCase() + s.slice(1);
@@ -39,7 +43,7 @@ const CategoriaPage = () => {
 
   useEffect(() => {
     const carregarProdutos = async () => {
-      if (!slug) return;
+      if (!router.isReady || !slug) return;
 
       try {
         setLoading(true);
@@ -52,6 +56,17 @@ const CategoriaPage = () => {
           lista = await getProdutosApi({
             q: '',
             somenteDisponiveis: true,
+          });
+        } else if (slug === 'buscar') {
+          const termo = (termoBusca || '').trim();
+          if (!termo) {
+            setProdutos([]);
+            setLoading(false);
+            return;
+          }
+
+          lista = await buscarProdutosApi({
+            q: termo,
           });
         } else {
           // Busca por categoria específica
@@ -70,7 +85,7 @@ const CategoriaPage = () => {
     };
 
     carregarProdutos();
-  }, [slug, categoriaNome]);
+  }, [router.isReady, slug, categoriaNome, termoBusca]);
 
   const formatarPreco = (valor) => {
     if (valor == null) return '';
@@ -98,6 +113,18 @@ const CategoriaPage = () => {
     alert('Função "Comprar agora" ainda será implementada 🙂');
   };
 
+  const tituloPagina =
+    slug === 'buscar'
+      ? `Resultados para "${termoBusca}"`
+      : categoriaNome;
+
+  const subtituloPagina =
+    slug === 'joias'
+      ? 'Veja todas as joias de prata 925 disponíveis na loja.'
+      : slug === 'buscar'
+      ? 'Veja as joias encontradas de acordo com o termo pesquisado.'
+      : `Explore nossa seleção de ${categoriaNome.toLowerCase()} em prata 925.`;
+
   return (
     <div className={styles.pageContainer}>
       <Header />
@@ -106,12 +133,8 @@ const CategoriaPage = () => {
         <div className={styles.card}>
           <div className={styles.headerRow}>
             <div>
-              <h1 className={styles.title}>{categoriaNome}</h1>
-              <p className={styles.subtitle}>
-                {slug === 'joias'
-                  ? 'Veja todas as joias de prata 925 disponíveis na loja.'
-                  : `Explore nossa seleção de ${categoriaNome.toLowerCase()} em prata 925.`}
-              </p>
+              <h1 className={styles.title}>{tituloPagina}</h1>
+              <p className={styles.subtitle}>{subtituloPagina}</p>
             </div>
           </div>
 
@@ -125,7 +148,9 @@ const CategoriaPage = () => {
 
           {!loading && !errorMsg && produtos.length === 0 && (
             <p className={styles.infoText}>
-              Nenhum produto encontrado nesta categoria.
+              {slug === 'buscar' && termoBusca
+                ? `Nenhum produto encontrado para "${termoBusca}".`
+                : 'Nenhum produto encontrado nesta categoria.'}
             </p>
           )}
 
