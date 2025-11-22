@@ -35,6 +35,10 @@ async function apiRequest(endpoint, method = 'GET', body = null, token = null) {
   return data;
 }
 
+// =======================
+// AUTENTICAÇÃO / USUÁRIO
+// =======================
+
 // Cadastro com FormData (por causa do multer/upload no backend)
 export async function registerUser(formData) {
   return apiRequest('/api/auth/register', 'POST', formData);
@@ -45,12 +49,12 @@ export async function loginUser({ email, senha }) {
   return apiRequest('/api/auth/login', 'POST', { email, senha });
 }
 
-// Recuperação de senha (envia email)
+// Esqueci minha senha
 export async function forgotPassword(email) {
   return apiRequest('/api/auth/forgot-password', 'POST', { email });
 }
 
-// Redefinir senha (usa token + email + novaSenha)
+// Redefinir senha
 export async function resetPassword({ email, token, novaSenha }) {
   return apiRequest('/api/auth/reset-password', 'POST', {
     email,
@@ -59,12 +63,49 @@ export async function resetPassword({ email, token, novaSenha }) {
   });
 }
 
-// 🔹 Buscar dados completos do usuário logado (GET /api/usuario/usuario)
+// Buscar dados do usuário logado (perfil)
 export async function getUsuarioApi(token) {
   return apiRequest('/api/usuario/usuario', 'GET', null, token);
 }
 
-// 🔹 Atualizar dados do usuário (PUT /api/usuario/usuario, com FormData)
+// Atualizar dados do usuário (perfil + avatar)
 export async function updateUsuarioApi(formData, token) {
   return apiRequest('/api/usuario/usuario', 'PUT', formData, token);
+}
+
+// =======================
+// PRODUTOS
+// =======================
+
+// Listar produtos (admin ou público)
+// params: { q?: string, somenteDisponiveis?: boolean }
+export async function getProdutos(params = {}) {
+  const query = new URLSearchParams();
+
+  if (params.q) {
+    query.append('q', params.q);
+  }
+  if (params.somenteDisponiveis) {
+    query.append('somenteDisponiveis', '1');
+  }
+
+  const queryString = query.toString();
+  const endpoint = `/api/products/produtos${queryString ? `?${queryString}` : ''}`;
+
+  return apiRequest(endpoint, 'GET');
+}
+
+// Criar novo produto (admin) - com imagem (FormData)
+export async function createProduto(formData, token) {
+  return apiRequest('/api/products/produtos', 'POST', formData, token);
+}
+
+// Atualizar produto (admin) - com/sem imagem (FormData)
+export async function updateProduto(id, formData, token) {
+  return apiRequest(`/api/products/produtos?_id=${id}`, 'PUT', formData, token);
+}
+
+// Excluir produto (admin)
+export async function deleteProduto(id, token) {
+  return apiRequest(`/api/products/produtos?_id=${id}`, 'DELETE', null, token);
 }

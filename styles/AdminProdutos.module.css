@@ -1,0 +1,526 @@
+.pageContainer {
+  min-height: 100vh;
+  background: #000;
+  color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px 40px;
+}
+
+.card {
+  width: 100%;
+  max-width: 900px;
+  background: rgba(10, 10, 10, 0.9);
+  border-radius: 18px;
+  border: 1px solid rgba(180, 180, 180, 0.25);
+  box-shadow: 0 0 28px rgba(0, 0, 0, 0.8);
+  padding: 26px 22px 28px;
+  box-sizing: border-box;
+}
+
+/* Cabeçalho da página */
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #bcbcbc;
+}
+
+/* Botão novo produto */
+.newProductButton {
+  padding: 10px 18px;
+  background: #f5f5f5;
+  color: #000;
+  border-radius: 999px;
+  border: none;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.newProductButton:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* ===== FORMULÁRIO ===== */
+
+.form {
+  margin-top: 10px;
+  margin-bottom: 24px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(150, 150, 150, 0.3);
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 13px;
+  color: #d8d8d8;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.input {
+  padding: 10px 14px;
+  background: #111;
+  border-radius: 10px;
+  border: 1px solid #444;
+  color: #ffffff;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: #c0c0c0;
+}
+
+.textarea {
+  width: 100%;
+  padding: 10px 14px;
+  background: #111;
+  border-radius: 10px;
+  border: 1px solid #444;
+  color: #ffffff;
+  font-size: 14px;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.textarea:focus {
+  border-color: #c0c0c0;
+}
+
+/* Imagem */
+.imagemRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.fileInput {
+  font-size: 13px;
+  color: #e0e0e0;
+}
+
+.imagemPreviewWrapper {
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #555;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.imagemPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Botões do formulário */
+
+.formButtonsRow {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.saveButton {
+  flex: 1;
+  padding: 12px;
+  background: #f5f5f5;
+  color: #000;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  transition: opacity 0.2s ease;
+}
+
+.saveButton:hover {
+  opacity: 0.9;
+}
+
+.cancelButton {
+  flex: 1;
+  padding: 12px;
+  background: #333;
+  border-radius: 999px;
+  border: 1px solid #777;
+  color: #e5e5e5;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.cancelButton:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+/* Mensagens */
+
+.errorText {
+  color: #ff8a8a;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.successText {
+  color: #9be29b;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.infoText {
+  font-size: 14px;
+  color: #d0d0d0;
+}
+
+/* ===== LISTA DE PRODUTOS ===== */
+
+.listaSection {
+  margin-top: 10px;
+  border-top: 1px solid rgba(150, 150, 150, 0.3);
+  padding-top: 16px;
+}
+
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 12px;
+}
+
+.listaTabela {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(160, 160, 160, 0.4);
+  overflow: hidden;
+  background: rgba(15, 15, 15, 0.95);
+}
+
+.listaLinha {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr 2fr 1fr 1fr 1.4fr;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(80, 80, 80, 0.4);
+  align-items: center;
+}
+
+.listaLinha:last-child {
+  border-bottom: none;
+}
+
+.listaHeader {
+  background: linear-gradient(90deg, #2b2b2b, #151515);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+
+.colImagem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.listaImagem {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid #555;
+}
+
+.noImage {
+  font-size: 11px;
+  color: #999;
+}
+
+.colCodigo {
+  font-size: 13px;
+  color: #dcdcdc;
+  font-weight: 500;
+}
+
+.colNome {
+  font-weight: 500;
+}
+
+.colAcoes {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-start;
+}
+
+/* Botões de ação */
+
+.acaoButton {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid #888;
+  background: transparent;
+  color: #f0f0f0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.acaoButton:hover {
+  background: #f5f5f5;
+  color: #000;
+  border-color: #f5f5f5;
+}
+
+.acaoExcluir {
+  border-color: #ff9b9b;
+  color: #ffbcbc;
+}
+
+.acaoExcluir:hover {
+  background: #ffb3b3;
+  color: #000;
+  border-color: #ffb3b3;
+}
+
+/* ===== MODAL EXCLUSÃO ===== */
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+}
+
+.modalContent {
+  width: 100%;
+  max-width: 360px;
+  background: #111;
+  border-radius: 16px;
+  border: 1px solid rgba(200, 200, 200, 0.25);
+  padding: 20px 18px 18px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+}
+
+.modalTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.modalText {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.modalTextSmall {
+  font-size: 12px;
+  color: #cccccc;
+  margin-bottom: 14px;
+}
+
+.modalButtonsRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.modalCancelButton {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid #777;
+  background: transparent;
+  color: #f0f0f0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.modalCancelButton:hover {
+  border-color: #fff;
+}
+
+.modalConfirmButton {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #ff9b9b;
+  background: #ff9b9b;
+  color: #000;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.modalConfirmButton:hover {
+  background: #ffb3b3;
+  border-color: #ffb3b3;
+}
+
+/* ===== RESPONSIVO (MOBILE) ===== */
+
+@media (max-width: 768px) {
+  .card {
+    padding: 22px 14px 24px;
+  }
+
+  .headerRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .imagemRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Esconde COMPLETAMENTE o cabeçalho no mobile */
+  .listaHeader {
+    display: none !important;
+  }
+
+  /* Cada produto vira um "card" vertical */
+  .listaLinha {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 12px 14px;
+    gap: 10px;
+  }
+
+  /* Cada coluna vira um bloco: label em cima, valor embaixo
+     SOMENTE nas linhas que NÃO são cabeçalho */
+  .listaLinha:not(.listaHeader) > span {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 13px;
+  }
+
+  /* Label genérico (Imagem, Código, etc) */
+  .listaLinha:not(.listaHeader) > span::before {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #b0b0b0;
+    margin-bottom: 4px;
+  }
+
+  /* Labels por coluna (na mesma ordem do desktop) */
+  .listaLinha:not(.listaHeader) > span:nth-child(1)::before {
+    content: 'Imagem';
+  }
+
+  .listaLinha:not(.listaHeader) > span:nth-child(2)::before {
+    content: 'Código';
+  }
+
+  .listaLinha:not(.listaHeader) > span:nth-child(3)::before {
+    content: 'Produto';
+  }
+
+  .listaLinha:not(.listaHeader) > span:nth-child(4)::before {
+    content: 'Preço';
+  }
+
+  .listaLinha:not(.listaHeader) > span:nth-child(5)::before {
+    content: 'Estoque';
+  }
+
+  .listaLinha:not(.listaHeader) > span:nth-child(6)::before {
+    content: 'Ações';
+  }
+
+  /* Imagem alinhada igual aos outros campos */
+  .colImagem {
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  .listaImagem {
+    width: 80px;
+    height: 80px;
+  }
+
+  .colCodigo {
+    font-weight: 500;
+    color: #e0e0e0;
+  }
+
+  .colNome {
+    font-size: 14px;
+    font-weight: 600;
+    color: #f5f5f5;
+  }
+
+  .colAcoes {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .acaoButton {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .modalContent {
+    margin: 0 16px;
+  }
+}

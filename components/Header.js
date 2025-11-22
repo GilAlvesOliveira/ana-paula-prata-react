@@ -1,4 +1,3 @@
-// components/Header.js
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import styles from './Header.module.css';
@@ -70,7 +69,7 @@ const Header = () => {
     }
   };
 
-  // "Minha Conta" no menu lateral → /usuario
+  // "Minha Conta" no menu lateral → /usuario (ou login se não logado)
   const handleMinhaContaClick = () => {
     if (usuario) {
       router.push('/usuario');
@@ -80,10 +79,30 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
-  // 🔹 Novo: "Minhas Compras" no menu lateral → /minhas-compras
-  const handleMinhasComprasClick = () => {
-    if (usuario) {
-      router.push('/minhas-compras');
+  // 🔹 Admin → Produtos
+  const handleAdminProdutosClick = () => {
+    if (usuario && usuario.role === 'admin') {
+      router.push('/admin/produtos');
+    } else {
+      router.push('/login');
+    }
+    setIsMenuOpen(false);
+  };
+
+  // 🔹 Admin → Pedidos (página futura)
+  const handleAdminPedidosClick = () => {
+    if (usuario && usuario.role === 'admin') {
+      router.push('/admin/pedidos');
+    } else {
+      router.push('/login');
+    }
+    setIsMenuOpen(false);
+  };
+
+  // 🔹 Admin → Usuários (página futura)
+  const handleAdminUsuariosClick = () => {
+    if (usuario && usuario.role === 'admin') {
+      router.push('/admin/usuarios');
     } else {
       router.push('/login');
     }
@@ -235,10 +254,16 @@ const Header = () => {
                 Minha Conta
               </button>
 
-              {/* 🔹 Novo botão */}
               <button
                 type="button"
-                onClick={handleMinhasComprasClick}
+                onClick={() => {
+                  if (usuario) {
+                    router.push('/minhas-compras');
+                  } else {
+                    router.push('/login');
+                  }
+                  setIsMenuOpen(false);
+                }}
               >
                 Minhas Compras
               </button>
@@ -252,6 +277,32 @@ const Header = () => {
               <button type="button">
                 Informações
               </button>
+
+              {/* 🔹 Seção ADMIN – só aparece para usuário admin */}
+              {usuario && usuario.role === 'admin' && (
+                <div className={styles.menuAdminSection}>
+                  <span className={styles.menuAdminTitle}>Administração</span>
+
+                  <button
+                    type="button"
+                    onClick={handleAdminProdutosClick}
+                  >
+                    Produtos
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAdminPedidosClick}
+                  >
+                    Pedidos
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleAdminUsuariosClick}
+                  >
+                    Usuários
+                  </button>
+                </div>
+              )}
 
               {usuario && (
                 <button
