@@ -1,4 +1,5 @@
-// services/api.js
+import { getToken } from './storage';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 async function apiRequest(endpoint, method = 'GET', body = null, token = null) {
@@ -35,9 +36,7 @@ async function apiRequest(endpoint, method = 'GET', body = null, token = null) {
   return data;
 }
 
-// =======================
-// AUTENTICAÇÃO / USUÁRIO
-// =======================
+// =============== AUTENTICAÇÃO ===============
 
 // Cadastro com FormData (por causa do multer/upload no backend)
 export async function registerUser(formData) {
@@ -50,62 +49,71 @@ export async function loginUser({ email, senha }) {
 }
 
 // Esqueci minha senha
-export async function forgotPassword(email) {
-  return apiRequest('/api/auth/forgot-password', 'POST', { email });
+export async function forgotPasswordApi(email) {
+  return apiRequest('/auth/forgot-password', 'POST', { email });
 }
 
 // Redefinir senha
-export async function resetPassword({ email, token, novaSenha }) {
-  return apiRequest('/api/auth/reset-password', 'POST', {
-    email,
-    token,
-    novaSenha,
-  });
+export async function resetPasswordApi({ email, token, novaSenha }) {
+  return apiRequest('/auth/reset-password', 'POST', { email, token, novaSenha });
 }
 
-// Buscar dados do usuário logado (perfil)
-export async function getUsuarioApi(token) {
+// =============== USUÁRIO ===============
+
+// Buscar dados do usuário logado
+export async function getUsuarioApi() {
+  const token = getToken();
+  if (!token) {
+    throw { status: 401, message: 'Não autenticado' };
+  }
   return apiRequest('/api/usuario/usuario', 'GET', null, token);
 }
 
-// Atualizar dados do usuário (perfil + avatar)
-export async function updateUsuarioApi(formData, token) {
+// Atualizar dados do usuário (nome, telefone, endereço, cep, avatar)
+export async function updateUsuarioApi(formData) {
+  const token = getToken();
+  if (!token) {
+    throw { status: 401, message: 'Não autenticado' };
+  }
   return apiRequest('/api/usuario/usuario', 'PUT', formData, token);
 }
 
-// =======================
-// PRODUTOS
-// =======================
+// =============== PRODUTOS (ADMIN) ===============
 
-// Listar produtos (admin ou público)
-// params: { q?: string, somenteDisponiveis?: boolean }
-export async function getProdutos(params = {}) {
-  const query = new URLSearchParams();
+// Listar produtos
+export async function getProdutosApi({ q = '', somenteDisponiveis = false } = {}) {
+  const params = new URLSearchParams();
+  if (q) params.append('q', q);
+  if (somenteDisponiveis) params.append('somenteDisponiveis', '1');
 
-  if (params.q) {
-    query.append('q', params.q);
-  }
-  if (params.somenteDisponiveis) {
-    query.append('somenteDisponiveis', '1');
-  }
+  const queryString = params.toString() ? `?${params.toString()}` : '';
 
-  const queryString = query.toString();
-  const endpoint = `/api/products/produtos${queryString ? `?${queryString}` : ''}`;
-
-  return apiRequest(endpoint, 'GET');
+  return apiRequest(`/api/products/produtos${queryString}`, 'GET');
 }
 
-// Criar novo produto (admin) - com imagem (FormData)
-export async function createProduto(formData, token) {
+// Criar produto (admin)
+export async function createProdutoApi(formData) {
+  const token = getToken();
+  if (!token) {
+    throw { status: 401, message: 'Não autenticado' };
+  }
   return apiRequest('/api/products/produtos', 'POST', formData, token);
 }
 
-// Atualizar produto (admin) - com/sem imagem (FormData)
-export async function updateProduto(id, formData, token) {
+// Atualizar produto (admin)
+export async function updateProdutoApi(id, formData) {
+  const token = getToken();
+  if (!token) {
+    throw { status: 401, message: 'Não autenticado' };
+  }
   return apiRequest(`/api/products/produtos?_id=${id}`, 'PUT', formData, token);
 }
 
 // Excluir produto (admin)
-export async function deleteProduto(id, token) {
+export async function deleteProdutoApi(id) {
+  const token = getToken();
+  if (!token) {
+    throw { status: 401, message: 'Não autenticado' };
+  }
   return apiRequest(`/api/products/produtos?_id=${id}`, 'DELETE', null, token);
 }

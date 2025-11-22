@@ -1,9 +1,10 @@
+// pages/index.js
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import styles from '../styles/Home.module.css';
-import { getUser } from '../services/storage';
+import { getUsuarioApi } from '../services/api';
 
 const Home = () => {
   const router = useRouter();
@@ -29,21 +30,46 @@ const Home = () => {
     pairs[0],
   ];
 
+  // Começa no índice 1 (primeiro slide "real")
   const [currentIndex, setCurrentIndex] = useState(1);
   const [isTransitionEnabled, setIsTransitionEnabled] = useState(true);
 
-  const [precisaCompletarCadastro, setPrecisaCompletarCadastro] = useState(false);
+  // Controle do aviso "complete o cadastro"
+  const [showProfileAlert, setShowProfileAlert] = useState(false);
 
   useEffect(() => {
-    const usuario = getUser();
-    if (usuario) {
-      const faltandoDados =
-        !usuario.telefone || !usuario.endereco || !usuario.cep;
+    const verificarCadastro = async () => {
+      try {
+        // Tenta buscar usuário logado na API
+        const usuario = await getUsuarioApi();
 
-      setPrecisaCompletarCadastro(faltandoDados);
-    } else {
-      setPrecisaCompletarCadastro(false);
-    }
+        if (!usuario) {
+          setShowProfileAlert(false);
+          return;
+        }
+
+        const faltaTelefone = !usuario.telefone || usuario.telefone.trim() === '';
+        const faltaEndereco = !usuario.endereco || usuario.endereco.trim() === '';
+        const faltaCep = !usuario.cep || usuario.cep.trim() === '';
+
+        if (faltaTelefone || faltaEndereco || faltaCep) {
+          setShowProfileAlert(true);
+        } else {
+          setShowProfileAlert(false);
+        }
+      } catch (error) {
+        console.error('Erro ao verificar cadastro completo na Home:', error);
+
+        // Se der 401 (não autenticado) ou qualquer erro, não mostra aviso
+        if (error && error.status === 401) {
+          setShowProfileAlert(false);
+        } else {
+          setShowProfileAlert(false);
+        }
+      }
+    };
+
+    verificarCadastro();
   }, []);
 
   const moveRight = () => {
@@ -57,17 +83,19 @@ const Home = () => {
   };
 
   const handleTransitionEnd = () => {
+    // Se chegar no clone do primeiro (última posição), volta silenciosamente pro primeiro real
     if (currentIndex === extendedPairs.length - 1) {
       setIsTransitionEnabled(false);
       setCurrentIndex(1);
     }
+    // Se chegar no clone do último (posição 0), volta silenciosamente pro último real
     if (currentIndex === 0) {
       setIsTransitionEnabled(false);
       setCurrentIndex(extendedPairs.length - 2);
     }
   };
 
-  const handleBannerClick = () => {
+  const handleIrParaUsuario = () => {
     router.push('/usuario');
   };
 
@@ -75,12 +103,19 @@ const Home = () => {
     <div className={styles.container}>
       <Header />
 
-      {precisaCompletarCadastro && (
-        <div className={styles.profileBanner} onClick={handleBannerClick}>
-          <span>
-            Seu cadastro está incompleto. <strong>Clique aqui</strong> para atualizar
-            seus dados (endereço, telefone e CEP).
+      {/* AVISO PARA COMPLETAR CADASTRO (só se faltar telefone/endereço/cep) */}
+      {showProfileAlert && (
+        <div className={styles.profileAlert}>
+          <span className={styles.profileAlertText}>
+            Complete seu cadastro com endereço, telefone e CEP para aproveitar melhor a loja.
           </span>
+          <button
+            type="button"
+            className={styles.profileAlertButton}
+            onClick={handleIrParaUsuario}
+          >
+            Atualizar dados
+          </button>
         </div>
       )}
 
@@ -200,6 +235,7 @@ const Home = () => {
         </div>
       </div>
 
+      {/* FOOTER */}
       <Footer />
     </div>
   );
