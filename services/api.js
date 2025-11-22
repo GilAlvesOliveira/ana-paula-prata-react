@@ -1,3 +1,4 @@
+// services/api.js
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
 async function apiRequest(endpoint, method = 'GET', body = null, token = null) {
@@ -42,4 +43,18 @@ export async function registerUser(formData) {
 // Login com email/senha
 export async function loginUser({ email, senha }) {
   return apiRequest('/api/auth/login', 'POST', { email, senha });
+}
+
+// Recuperação de senha (envia email)
+export async function forgotPassword(email) {
+  return apiRequest('/api/auth/forgot-password', 'POST', { email });
+}
+
+// 🔹 Redefinir senha (usa token + email + novaSenha)
+export async function resetPassword({ email, token, novaSenha }) {
+  return apiRequest('/api/auth/reset-password', 'POST', {
+    email,
+    token,
+    novaSenha,
+  });
 }

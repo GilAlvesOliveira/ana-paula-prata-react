@@ -1,3 +1,4 @@
+// pages/login.js
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/Login.module.css';
@@ -9,7 +10,6 @@ export default function Login() {
 
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
 
@@ -30,13 +30,8 @@ export default function Login() {
       const token = resp.token;
       const usuario = resp.usuario || resp.user;
 
-      if (token) {
-        saveToken(token);
-      }
-
-      if (usuario) {
-        saveUser(usuario);
-      }
+      if (token) saveToken(token);
+      if (usuario) saveUser(usuario);
 
       router.push('/');
     } catch (error) {
@@ -47,9 +42,9 @@ export default function Login() {
     }
   };
 
-  const handleGoToRegister = () => {
-    router.push('/register');
-  };
+  const handleGoToRegister = () => router.push('/register');
+
+  const handleForgotPassword = () => router.push('/forgot-password');
 
   return (
     <div className={styles.container}>
@@ -85,16 +80,7 @@ export default function Login() {
           </div>
 
           {erro && (
-            <p
-              style={{
-                color: '#ff8a8a',
-                fontSize: '13px',
-                marginTop: '4px',
-                marginBottom: '6px',
-              }}
-            >
-              {erro}
-            </p>
+            <p className={styles.errorText}>{erro}</p>
           )}
 
           <button
@@ -106,7 +92,12 @@ export default function Login() {
           </button>
         </form>
 
-        <button type="button" className={styles.forgotButton}>
+        {/* 🔹 Agora redireciona corretamente */}
+        <button
+          type="button"
+          className={styles.forgotButton}
+          onClick={handleForgotPassword}
+        >
           Esqueci minha senha
         </button>
 

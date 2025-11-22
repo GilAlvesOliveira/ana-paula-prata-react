@@ -76,6 +76,14 @@
   border-color: #c0c0c0;
 }
 
+/* Mensagem de erro */
+.errorText {
+  color: #ff8a8a;
+  font-size: 13px;
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
+
 /* Botão principal */
 .loginButton {
   width: 100%;

@@ -1,4 +1,3 @@
-// pages/register.js
 import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/Register.module.css';
@@ -13,7 +12,7 @@ export default function Register() {
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
 
-  // 👇 novo estado para imagem
+  // Avatar opcional
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
 
@@ -29,7 +28,6 @@ export default function Register() {
     if (!nome || !email || !senha || !confirmarSenha) return false;
     if (senha.length < 4) return false;
     if (senha !== confirmarSenha) return false;
-    // imagem não é obrigatória
     return true;
   }, [nome, email, senha, confirmarSenha]);
 
@@ -64,7 +62,6 @@ export default function Register() {
       formData.append('email', email);
       formData.append('senha', senha);
 
-      // 👇 se tiver imagem, manda como "file" (multer espera esse nome)
       if (avatarFile) {
         formData.append('file', avatarFile);
       }
@@ -109,7 +106,7 @@ export default function Register() {
           Preencha os dados para criar sua conta
         </p>
 
-        {/* 👇 bloco de upload de imagem */}
+        {/* Upload da foto de perfil (opcional) */}
         <div className={styles.imageUploadContainer}>
           <label className={styles.imageLabel}>Foto de perfil (opcional)</label>
           <div className={styles.imageRow}>
@@ -126,7 +123,7 @@ export default function Register() {
               <div className={styles.imagePreviewWrapper}>
                 <img
                   src={avatarPreview}
-                  alt="Pré-visualização do avatar"
+                  alt="Pré-visualização"
                   className={styles.imagePreview}
                 />
               </div>
