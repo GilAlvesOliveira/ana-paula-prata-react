@@ -129,3 +129,58 @@ export async function buscarProdutosApi({ q }) {
 
   return apiRequest(`/api/products/busca${queryString}`, 'GET');
 }
+
+// =============== CARRINHO ===============
+
+// Buscar itens do carrinho do usuário logado
+export async function getCarrinhoApi() {
+  const token = getToken();
+  if (!token) {
+    throw { status: 401, message: 'Não autenticado' };
+  }
+  return apiRequest('/api/carrinho/carrinho', 'GET', null, token);
+}
+
+// Adicionar item ao carrinho
+export async function addItemCarrinhoApi({ produtoId, quantidade }) {
+  const token = getToken();
+  if (!token) {
+    throw { status: 401, message: 'Não autenticado' };
+  }
+  return apiRequest(
+    '/api/carrinho/carrinho',
+    'POST',
+    { produtoId, quantidade },
+    token
+  );
+}
+
+// Remover 1 unidade de um item do carrinho (ou remover totalmente se chegar em 0)
+export async function removerItemCarrinhoApi(produtoId) {
+  const token = getToken();
+  if (!token) {
+    throw { status: 401, message: 'Não autenticado' };
+  }
+  return apiRequest(
+    '/api/carrinho/item',
+    'DELETE',
+    { produtoId },
+    token
+  );
+}
+
+// =============== PEDIDO ===============
+
+// Criar pedido com base no carrinho e frete informado
+export async function criarPedidoApi({ frete }) {
+  const token = getToken();
+  if (!token) {
+    throw { status: 401, message: 'Não autenticado' };
+  }
+  return apiRequest(
+    '/api/carrinho/pedido',
+    'POST',
+    { frete },
+    token
+  );
+}

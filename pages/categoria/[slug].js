@@ -4,7 +4,11 @@ import { useRouter } from 'next/router';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import styles from '../../styles/Categoria.module.css';
-import { buscarProdutosApi, getProdutosApi } from '../../services/api';
+import {
+  buscarProdutosApi,
+  getProdutosApi,
+  addItemCarrinhoApi,
+} from '../../services/api';
 
 const CategoriaPage = () => {
   const router = useRouter();
@@ -15,6 +19,11 @@ const CategoriaPage = () => {
   const [errorMsg, setErrorMsg] = useState('');
 
   const [imagemAmpliada, setImagemAmpliada] = useState(null);
+
+  // Modal de feedback do carrinho
+  const [modalCarrinhoAberto, setModalCarrinhoAberto] = useState(false);
+  const [modalCarrinhoMensagem, setModalCarrinhoMensagem] = useState('');
+  const [modalMostrarIrCarrinho, setModalMostrarIrCarrinho] = useState(false);
 
   const termoBusca = typeof q === 'string' ? q : '';
 
@@ -103,14 +112,54 @@ const CategoriaPage = () => {
     setImagemAmpliada(null);
   };
 
-  const handleAdicionarCarrinho = (produto) => {
-    console.log('Adicionar ao carrinho:', produto);
-    alert('Função "Adicionar ao carrinho" ainda será implementada 🙂');
+  const abrirModalCarrinho = (mensagem, mostrarIrCarrinho = false) => {
+    setModalCarrinhoMensagem(mensagem);
+    setModalMostrarIrCarrinho(mostrarIrCarrinho);
+    setModalCarrinhoAberto(true);
   };
 
-  const handleComprarAgora = (produto) => {
-    console.log('Comprar agora:', produto);
-    alert('Função "Comprar agora" ainda será implementada 🙂');
+  const handleAdicionarCarrinho = async (produto) => {
+    try {
+      await addItemCarrinhoApi({
+        produtoId: produto._id,
+        quantidade: 1,
+      });
+
+      abrirModalCarrinho('Produto adicionado ao carrinho!', true);
+    } catch (e) {
+      console.error('Erro ao adicionar ao carrinho:', e);
+
+      if (e.status === 401) {
+        abrirModalCarrinho('Faça login para adicionar produtos ao carrinho.', false);
+      } else {
+        abrirModalCarrinho(
+          e.message || 'Erro ao adicionar produto ao carrinho.',
+          false
+        );
+      }
+    }
+  };
+
+  const handleComprarAgora = async (produto) => {
+    try {
+      await addItemCarrinhoApi({
+        produtoId: produto._id,
+        quantidade: 1,
+      });
+
+      router.push('/carrinho');
+    } catch (e) {
+      console.error('Erro ao comprar agora (adicionar ao carrinho):', e);
+
+      if (e.status === 401) {
+        router.push('/login');
+      } else {
+        abrirModalCarrinho(
+          e.message || 'Erro ao adicionar produto ao carrinho.',
+          false
+        );
+      }
+    }
   };
 
   const tituloPagina =
@@ -246,6 +295,45 @@ const CategoriaPage = () => {
               alt="Imagem ampliada"
               className={styles.modalImg}
             />
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE FEEDBACK DO CARRINHO */}
+      {modalCarrinhoAberto && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setModalCarrinhoAberto(false)}
+        >
+          <div
+            className={styles.modalInfoBox}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className={styles.modalInfoTitle}>Carrinho</h3>
+            <p className={styles.modalInfoText}>{modalCarrinhoMensagem}</p>
+
+            <div className={styles.modalInfoButtonsRow}>
+              {modalMostrarIrCarrinho && (
+                <button
+                  type="button"
+                  className={styles.modalInfoButtonPrimary}
+                  onClick={() => {
+                    setModalCarrinhoAberto(false);
+                    router.push('/carrinho');
+                  }}
+                >
+                  Ir para o carrinho
+                </button>
+              )}
+
+              <button
+                type="button"
+                className={styles.modalInfoButtonSecondary}
+                onClick={() => setModalCarrinhoAberto(false)}
+              >
+                Continuar comprando
+              </button>
+            </div>
           </div>
         </div>
       )}

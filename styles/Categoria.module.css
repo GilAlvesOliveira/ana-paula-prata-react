@@ -320,3 +320,57 @@
   font-weight: bold;
   color: #000;
 }
+
+/* ===== MODAL DE FEEDBACK DO CARRINHO ===== */
+
+.modalInfoBox {
+  background: #111;
+  padding: 18px 18px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(200, 200, 200, 0.25);
+  max-width: 360px;
+  width: 100%;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+}
+
+.modalInfoTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.modalInfoText {
+  font-size: 14px;
+  color: #e0e0e0;
+  margin-bottom: 14px;
+}
+
+.modalInfoButtonsRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.modalInfoButtonPrimary {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #f5f5f5;
+  background: #f5f5f5;
+  color: #000;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.modalInfoButtonSecondary {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid #777;
+  background: transparent;
+  color: #f0f0f0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
