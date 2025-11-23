@@ -10,15 +10,12 @@ import {
   criarPedidoApi,
   calcularFreteMelhorEnvio,
   getUsuarioApi,
-  criarPreferenciaPagamentoApi,
+  criarPreferenciaPagamentoApi, // 🔹 chamada para Mercado Pago
 } from '../../services/api';
-import { useRouter } from 'next/router';
 
 const REMETENTE_CEP = '18190-011'; // from fixo (CEP da loja)
 
 const CarrinhoPage = () => {
-  const router = useRouter();
-
   const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -40,10 +37,6 @@ const CarrinhoPage = () => {
 
   // 🔹 Modal de imagem ampliada
   const [imagemAmpliada, setImagemAmpliada] = useState(null);
-
-  // 🔹 Pagamento pendente (para reabrir checkout)
-  const [pedidoPendente, setPedidoPendente] = useState(null);
-  const [loadingPagamento, setLoadingPagamento] = useState(false);
 
   const carregarCarrinho = async () => {
     try {
@@ -73,6 +66,7 @@ const CarrinhoPage = () => {
       }
     } catch (e) {
       console.error('Erro ao buscar usuário para CEP:', e);
+      // se não tiver login ou CEP, só não permite calcular frete
     }
   };
 
@@ -80,20 +74,6 @@ const CarrinhoPage = () => {
     const init = async () => {
       await carregarCarrinho();
       await carregarUsuarioCep();
-
-      // Carrega pedido pendente do localStorage (se existir)
-      try {
-        const stored = localStorage.getItem('pedidoPendente');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (parsed && parsed.pedidoId && parsed.total != null) {
-            setPedidoPendente(parsed);
-          }
-        }
-      } catch (e) {
-        console.error('Erro ao ler pedido pendente do localStorage:', e);
-        localStorage.removeItem('pedidoPendente');
-      }
     };
     init();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -160,29 +140,7 @@ const CarrinhoPage = () => {
     }
   };
 
-  // 🔹 Abrir checkout do Mercado Pago em nova aba
-  const abrirCheckoutMercadoPago = async ({ pedidoId, total }) => {
-    try {
-      setLoadingPagamento(true);
-      const pref = await criarPreferenciaPagamentoApi({ total, pedidoId });
-
-      if (!pref || !pref.initPoint) {
-        setErrorMsg('Não foi possível iniciar o pagamento no momento.');
-        return;
-      }
-
-      // Abre o checkout do Mercado Pago em nova aba
-      window.open(pref.initPoint, '_blank');
-
-      setSuccessMsg('Pedido criado! Abrimos uma nova aba para o pagamento.');
-    } catch (e) {
-      console.error('Erro ao criar preferência de pagamento:', e);
-      setErrorMsg(e.message || 'Erro ao iniciar pagamento.');
-    } finally {
-      setLoadingPagamento(false);
-    }
-  };
-
+  // 🔹 Finalizar compra: cria pedido + abre Mercado Pago em nova aba
   const handleFinalizarCompra = async () => {
     try {
       setErrorMsg('');
@@ -196,36 +154,43 @@ const CarrinhoPage = () => {
 
       const freteNumLocal = parseFloat(frete);
       if (isNaN(freteNumLocal) || freteNumLocal <= 0) {
-        setFreteErro('Selecione uma opção de frete antes de finalizar a compra.');
+        setFreteErro(
+          'Selecione uma opção de frete antes de finalizar a compra.'
+        );
         return;
       }
 
-      // Cria o pedido no backend (rota /api/pedidos/pedidos)
-      const resp = await criarPedidoApi({ frete: freteNumLocal });
+      // 1) Cria o pedido no backend
+      const respPedido = await criarPedidoApi({ frete: freteNumLocal });
+      const { pedidoId, total } = respPedido;
 
-      // Guarda pedido pendente no localStorage para poder reabrir depois
-      const pedidoInfo = {
-        pedidoId: resp.pedidoId,
-        total: resp.total,
-      };
+      setSuccessMsg(
+        `Pedido criado com sucesso! Número do pedido: ${pedidoId}`
+      );
 
-      try {
-        localStorage.setItem('pedidoPendente', JSON.stringify(pedidoInfo));
-      } catch (e) {
-        console.error('Erro ao salvar pedido pendente no localStorage:', e);
-      }
-      setPedidoPendente(pedidoInfo);
-
-      // Limpa frete/calculadora na tela
+      // Limpa frete e recarrega carrinho (que deve vir vazio)
       setFrete('');
       setFreteOpcoes([]);
       setFreteSelecionadoId(null);
-
-      // Carrinho é esvaziado no backend; recarrega lista
       await carregarCarrinho();
 
-      // Abre Mercado Pago em nova aba
-      await abrirCheckoutMercadoPago(pedidoInfo);
+      // 2) Cria preferência de pagamento no Mercado Pago
+      try {
+        const pref = await criarPreferenciaPagamentoApi({
+          total,
+          pedidoId,
+        });
+
+        if (pref && pref.initPoint) {
+          window.open(pref.initPoint, '_blank'); // abre checkout em nova aba
+        }
+      } catch (e) {
+        console.error('Erro ao criar preferência de pagamento:', e);
+        // não derruba a compra, apenas avisa que não conseguiu abrir o pagamento
+        setErrorMsg(
+          'Pedido criado, mas houve um erro ao abrir o pagamento. Acesse "Meus pedidos" para tentar pagar novamente.'
+        );
+      }
     } catch (e) {
       console.error('Erro ao finalizar compra:', e);
       if (e.status === 401) {
@@ -234,12 +199,6 @@ const CarrinhoPage = () => {
         setErrorMsg(e.message || 'Erro ao finalizar compra.');
       }
     }
-  };
-
-  // 🔹 Reabrir pagamento para pedido pendente (sem criar novo pedido)
-  const handleReabrirPagamentoPendente = async () => {
-    if (!pedidoPendente) return;
-    await abrirCheckoutMercadoPago(pedidoPendente);
   };
 
   // 🔹 Calcula dimensões/peso do pacote considerando vários produtos
@@ -331,7 +290,9 @@ const CarrinhoPage = () => {
 
       setFreteSelecionadoId(opcaoMaisBarata.id);
       setFrete(String(opcaoMaisBarata.price || '0'));
-      setFreteMsg('Frete calculado. Você pode escolher outra opção se desejar.');
+      setFreteMsg(
+        'Frete calculado. Você pode escolher outra opção se desejar.'
+      );
     } catch (e) {
       console.error('Erro ao calcular frete:', e);
       setFreteOpcoes([]);
@@ -355,11 +316,7 @@ const CarrinhoPage = () => {
   };
 
   const finalizarDesabilitado =
-    loading ||
-    loadingFrete ||
-    loadingPagamento ||
-    !produtos.length ||
-    freteNum <= 0;
+    loading || loadingFrete || !produtos.length || freteNum <= 0;
 
   return (
     <div className={styles.pageContainer}>
@@ -405,9 +362,7 @@ const CarrinhoPage = () => {
                           style={{ cursor: 'pointer' }}
                         />
                       ) : (
-                        <div className={styles.itemNoImage}>
-                          Sem imagem
-                        </div>
+                        <div className={styles.itemNoImage}>Sem imagem</div>
                       )}
                     </div>
 
@@ -554,37 +509,11 @@ const CarrinhoPage = () => {
                     onClick={handleFinalizarCompra}
                     disabled={finalizarDesabilitado}
                   >
-                    {loadingPagamento ? 'Iniciando pagamento...' : 'Finalizar compra'}
+                    Finalizar compra
                   </button>
                 </div>
               </section>
             </>
-          )}
-
-          {/* Se tiver pedido pendente, mostra atalho para pagar */}
-          {!loading && !errorMsg && pedidoPendente && (
-            <section className={styles.pendingSection}>
-              <div className={styles.pendingBox}>
-                <h2 className={styles.pendingTitle}>Pagamento pendente</h2>
-                <p className={styles.pendingText}>
-                  Você possui um pedido pendente de pagamento.
-                </p>
-                <p className={styles.pendingTextSmall}>
-                  Número do pedido: <strong>{pedidoPendente.pedidoId}</strong>
-                  <br />
-                  Valor:{' '}
-                  <strong>{formatarPreco(pedidoPendente.total)}</strong>
-                </p>
-                <button
-                  type="button"
-                  className={styles.pendingButton}
-                  onClick={handleReabrirPagamentoPendente}
-                  disabled={loadingPagamento}
-                >
-                  {loadingPagamento ? 'Abrindo pagamento...' : 'Pagar este pedido'}
-                </button>
-              </div>
-            </section>
           )}
         </div>
       </main>
