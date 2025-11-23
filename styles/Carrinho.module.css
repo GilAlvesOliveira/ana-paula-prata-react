@@ -245,20 +245,7 @@
   margin-bottom: 10px;
 }
 
-.freteInput {
-  width: 130px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid #555;
-  background: #181818;
-  color: #f5f5f5;
-  font-size: 13px;
-  outline: none;
-}
-
-.freteInput:focus {
-  border-color: #c0c0c0;
-}
+/* Botão de finalizar */
 
 .finishButton {
   width: 100%;
@@ -275,9 +262,96 @@
   transition: opacity 0.2s ease, transform 0.1s ease;
 }
 
-.finishButton:hover {
+.finishButton:hover:not(:disabled) {
   opacity: 0.9;
   transform: translateY(-1px);
+}
+
+.finishButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== FRETE (botão + opções) ===== */
+
+.calcularFreteButton {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #777;
+  background: #222;
+  color: #f5f5f5;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+
+.calcularFreteButton:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.calcularFreteButton:not(:disabled):hover {
+  border-color: #fff;
+  background: #333;
+}
+
+.freteMessage {
+  font-size: 12px;
+  color: #d0d0d0;
+  margin-top: 4px;
+}
+
+.freteOptions {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.freteOptionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(120, 120, 120, 0.5);
+  background: #151515;
+  cursor: pointer;
+}
+
+.freteOptionItem input[type='radio'] {
+  margin-top: 3px;
+}
+
+.freteOptionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.freteOptionTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.freteOptionName {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.freteOptionPrice {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.freteOptionBottom {
+  font-size: 11px;
+  color: #c0c0c0;
 }
 
 /* ===== MODAIS (ALERTA E IMAGEM) ===== */

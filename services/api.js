@@ -1,6 +1,9 @@
+// services/api.js
 import { getToken } from './storage';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const MELHOR_ENVIO_BASE_URL =
+  (process.env.NEXT_PUBLIC_URL_MELHOR_ENVIO || 'https://www.melhorenvio.com.br/api/v2').replace(/\/$/, '');
 
 async function apiRequest(endpoint, method = 'GET', body = null, token = null) {
   const headers = {};
@@ -36,10 +39,14 @@ async function apiRequest(endpoint, method = 'GET', body = null, token = null) {
   return data;
 }
 
-// 🔔 Dispara evento global indicando que o carrinho foi atualizado
-function dispatchCarrinhoAtualizado() {
+// Dispara evento global para o Header atualizar o badge do carrinho
+function dispararEventoCarrinho(totalItens) {
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new Event('carrinhoAtualizado'));
+    window.dispatchEvent(
+      new CustomEvent('carrinhoAtualizado', {
+        detail: { totalItens },
+      })
+    );
   }
 }
 
@@ -144,7 +151,16 @@ export async function getCarrinhoApi() {
   if (!token) {
     throw { status: 401, message: 'Não autenticado' };
   }
-  return apiRequest('/api/carrinho/carrinho', 'GET', null, token);
+
+  const data = await apiRequest('/api/carrinho/carrinho', 'GET', null, token);
+
+  const totalItens = (data.produtos || []).reduce(
+    (sum, p) => sum + Number(p.quantidade || 0),
+    0
+  );
+  dispararEventoCarrinho(totalItens);
+
+  return data;
 }
 
 export async function addItemCarrinhoApi({ produtoId, quantidade }) {
@@ -160,8 +176,13 @@ export async function addItemCarrinhoApi({ produtoId, quantidade }) {
     token
   );
 
-  // Atualiza badge do carrinho
-  dispatchCarrinhoAtualizado();
+  // Atualiza badge do carrinho após adicionar
+  try {
+    await getCarrinhoApi();
+  } catch (e) {
+    console.error('Erro ao atualizar quantidade do carrinho:', e);
+  }
+
   return resp;
 }
 
@@ -178,8 +199,13 @@ export async function removerItemCarrinhoApi(produtoId) {
     token
   );
 
-  // Atualiza badge do carrinho
-  dispatchCarrinhoAtualizado();
+  // Atualiza badge do carrinho após remover
+  try {
+    await getCarrinhoApi();
+  } catch (e) {
+    console.error('Erro ao atualizar quantidade do carrinho:', e);
+  }
+
   return resp;
 }
 
@@ -196,7 +222,45 @@ export async function criarPedidoApi({ frete }) {
     token
   );
 
-  // Carrinho é esvaziado no backend → atualiza badge
-  dispatchCarrinhoAtualizado();
+  // Depois do pedido, carrinho fica vazio
+  dispararEventoCarrinho(0);
+
   return resp;
+}
+
+// =============== FRETE - MELHOR ENVIO ===============
+
+export async function calcularFreteMelhorEnvio({
+  from,
+  to,
+  width,
+  height,
+  length,
+  weight,
+  insuranceValue = 0,
+}) {
+  const params = new URLSearchParams({
+    from,
+    to,
+    width: String(width),
+    height: String(height),
+    length: String(length),
+    weight: String(weight),
+    insurance_value: String(insuranceValue),
+  });
+
+  const url = `${MELHOR_ENVIO_BASE_URL}/calculator?${params.toString()}`;
+
+  const response = await fetch(url);
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw {
+      status: response.status,
+      message: data.error || 'Erro ao calcular frete',
+    };
+  }
+
+  // A API retorna um array de opções
+  return data;
 }

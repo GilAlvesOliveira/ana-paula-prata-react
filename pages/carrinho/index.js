@@ -8,8 +8,12 @@ import {
   addItemCarrinhoApi,
   removerItemCarrinhoApi,
   criarPedidoApi,
+  calcularFreteMelhorEnvio,
+  getUsuarioApi,
 } from '../../services/api';
 import { useRouter } from 'next/router';
+
+const REMETENTE_CEP = '18190-011'; // from fixo (CEP da loja)
 
 const CarrinhoPage = () => {
   const router = useRouter();
@@ -19,7 +23,15 @@ const CarrinhoPage = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
 
+  // frete = valor da opção escolhida
   const [frete, setFrete] = useState('');
+  const [freteOpcoes, setFreteOpcoes] = useState([]);
+  const [freteSelecionadoId, setFreteSelecionadoId] = useState(null);
+  const [loadingFrete, setLoadingFrete] = useState(false);
+  const [freteMsg, setFreteMsg] = useState('');
+  const [freteErro, setFreteErro] = useState('');
+
+  const [usuarioCep, setUsuarioCep] = useState('');
 
   // 🔹 Modal de estoque indisponível
   const [showEstoqueModal, setShowEstoqueModal] = useState(false);
@@ -40,8 +52,6 @@ const CarrinhoPage = () => {
       console.error('Erro ao carregar carrinho:', e);
       if (e.status === 401) {
         setErrorMsg('Faça login para visualizar seu carrinho.');
-        // Opcional: redirecionar para login
-        // router.push('/login');
       } else {
         setErrorMsg(e.message || 'Erro ao carregar carrinho.');
       }
@@ -50,13 +60,29 @@ const CarrinhoPage = () => {
     }
   };
 
+  const carregarUsuarioCep = async () => {
+    try {
+      const usuario = await getUsuarioApi();
+      if (usuario && usuario.cep) {
+        setUsuarioCep(usuario.cep);
+      }
+    } catch (e) {
+      console.error('Erro ao buscar usuário para CEP:', e);
+      // se não tiver login ou CEP, só não permite calcular frete
+    }
+  };
+
   useEffect(() => {
-    carregarCarrinho();
+    const init = async () => {
+      await carregarCarrinho();
+      await carregarUsuarioCep();
+    };
+    init();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formatarPreco = (valor) => {
-    if (valor == null) return '';
+    if (valor == null || valor === '') return '';
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
@@ -69,7 +95,8 @@ const CarrinhoPage = () => {
     return sum + preco * qtd;
   }, 0);
 
-  const totalComFrete = totalProdutos + (parseFloat(frete || '0') || 0);
+  const freteNum = parseFloat(frete || '0') || 0;
+  const totalComFrete = totalProdutos + freteNum;
 
   const handleAumentarQuantidade = async (produto) => {
     try {
@@ -119,33 +146,136 @@ const CarrinhoPage = () => {
     try {
       setErrorMsg('');
       setSuccessMsg('');
-
-      const freteNum = parseFloat(frete);
-      if (isNaN(freteNum) || freteNum <= 0) {
-        setErrorMsg('Informe um valor de frete válido (maior que zero).');
-        return;
-      }
+      setFreteErro('');
 
       if (!produtos || produtos.length === 0) {
         setErrorMsg('Seu carrinho está vazio.');
         return;
       }
 
-      const resp = await criarPedidoApi({ frete: freteNum });
+      const freteNumLocal = parseFloat(frete);
+      if (isNaN(freteNumLocal) || freteNumLocal <= 0) {
+        setFreteErro('Selecione uma opção de frete antes de finalizar a compra.');
+        return;
+      }
+
+      const resp = await criarPedidoApi({ frete: freteNumLocal });
 
       setSuccessMsg(
         `Pedido criado com sucesso! Número do pedido: ${resp.pedidoId}`
       );
       setFrete('');
+      setFreteOpcoes([]);
+      setFreteSelecionadoId(null);
       await carregarCarrinho();
     } catch (e) {
       console.error('Erro ao finalizar compra:', e);
       if (e.status === 401) {
         setErrorMsg('Faça login para finalizar sua compra.');
-        // router.push('/login');
       } else {
         setErrorMsg(e.message || 'Erro ao finalizar compra.');
       }
+    }
+  };
+
+  // 🔹 Calcula dimensões/peso do pacote considerando vários produtos
+  const calcularDimensoesPacote = () => {
+    let larguraMax = 0;
+    let comprimentoMax = 0;
+    let alturaTotal = 0;
+    let pesoTotal = 0;
+
+    produtos.forEach((p) => {
+      const qtd = Number(p.quantidade || 0) || 0;
+      const largura = Number(p.largura || 0) || 0;
+      const comprimento = Number(p.comprimento || 0) || 0;
+      const altura = Number(p.altura || 0) || 0;
+      const peso = Number(p.peso || 0) || 0;
+
+      if (largura > larguraMax) larguraMax = largura;
+      if (comprimento > comprimentoMax) comprimentoMax = comprimento;
+      alturaTotal += altura * qtd;
+      pesoTotal += peso * qtd;
+    });
+
+    // Valores mínimos de segurança (Correios/transportadoras não aceitam 0)
+    if (larguraMax <= 0) larguraMax = 10;
+    if (comprimentoMax <= 0) comprimentoMax = 15;
+    if (alturaTotal <= 0) alturaTotal = 2;
+    if (pesoTotal <= 0) pesoTotal = 0.1;
+
+    return {
+      width: larguraMax,
+      length: comprimentoMax,
+      height: alturaTotal,
+      weight: pesoTotal,
+    };
+  };
+
+  // 🔹 Calcular frete (MelhorEnvio)
+  const handleCalcularFrete = async () => {
+    try {
+      setFreteErro('');
+      setFreteMsg('');
+
+      if (!produtos || produtos.length === 0) {
+        setFreteErro('Seu carrinho está vazio.');
+        return;
+      }
+
+      if (!usuarioCep || String(usuarioCep).trim().length < 8) {
+        setFreteErro(
+          'Cadastre um CEP válido na sua conta para calcular o frete.'
+        );
+        return;
+      }
+
+      const { width, height, length, weight } = calcularDimensoesPacote();
+
+      setLoadingFrete(true);
+
+      const opcoes = await calcularFreteMelhorEnvio({
+        from: REMETENTE_CEP,
+        to: usuarioCep,
+        width,
+        height,
+        length,
+        weight,
+        insuranceValue: 0,
+      });
+
+      const opcoesValidas = (opcoes || []).filter(
+        (opt) => !opt.error && opt.price
+      );
+
+      if (!opcoesValidas.length) {
+        setFreteOpcoes([]);
+        setFreteSelecionadoId(null);
+        setFrete('');
+        setFreteErro(
+          'Nenhuma opção de frete disponível para este endereço no momento.'
+        );
+        return;
+      }
+
+      setFreteOpcoes(opcoesValidas);
+
+      // já seleciona a opção mais barata por padrão
+      const opcaoMaisBarata = opcoesValidas.reduce((min, o) =>
+        parseFloat(o.price) < parseFloat(min.price) ? o : min
+      );
+
+      setFreteSelecionadoId(opcaoMaisBarata.id);
+      setFrete(String(opcaoMaisBarata.price || '0'));
+      setFreteMsg('Frete calculado. Você pode escolher outra opção se desejar.');
+    } catch (e) {
+      console.error('Erro ao calcular frete:', e);
+      setFreteOpcoes([]);
+      setFreteSelecionadoId(null);
+      setFrete('');
+      setFreteErro(e.message || 'Erro ao calcular frete.');
+    } finally {
+      setLoadingFrete(false);
     }
   };
 
@@ -159,6 +289,12 @@ const CarrinhoPage = () => {
   const fecharImagem = () => {
     setImagemAmpliada(null);
   };
+
+  const finalizarDesabilitado =
+    loading ||
+    loadingFrete ||
+    !produtos.length ||
+    freteNum <= 0;
 
   return (
     <div className={styles.pageContainer}>
@@ -274,14 +410,65 @@ const CarrinhoPage = () => {
 
                   <div className={styles.summaryRow}>
                     <span>Frete</span>
-                    <input
-                      type="number"
-                      className={styles.freteInput}
-                      placeholder="0,00"
-                      value={frete}
-                      onChange={(e) => setFrete(e.target.value)}
-                    />
+                    <button
+                      type="button"
+                      className={styles.calcularFreteButton}
+                      onClick={handleCalcularFrete}
+                      disabled={loadingFrete || !produtos.length}
+                    >
+                      {loadingFrete ? 'Calculando...' : 'Calcular frete'}
+                    </button>
                   </div>
+
+                  {freteErro && (
+                    <p className={styles.errorText}>{freteErro}</p>
+                  )}
+
+                  {freteMsg && !freteErro && (
+                    <p className={styles.freteMessage}>{freteMsg}</p>
+                  )}
+
+                  {/* Opções de frete retornadas pela API */}
+                  {freteOpcoes.length > 0 && (
+                    <div className={styles.freteOptions}>
+                      {freteOpcoes.map((opt) => (
+                        <label
+                          key={opt.id}
+                          className={styles.freteOptionItem}
+                        >
+                          <input
+                            type="radio"
+                            name="freteOpcao"
+                            value={opt.id}
+                            checked={freteSelecionadoId === opt.id}
+                            onChange={() => {
+                              setFreteSelecionadoId(opt.id);
+                              setFrete(String(opt.price || '0'));
+                            }}
+                          />
+                          <div className={styles.freteOptionInfo}>
+                            <div className={styles.freteOptionTop}>
+                              <span className={styles.freteOptionName}>
+                                {opt.company?.name} - {opt.name}
+                              </span>
+                              <span className={styles.freteOptionPrice}>
+                                {formatarPreco(opt.price)}
+                              </span>
+                            </div>
+                            <div className={styles.freteOptionBottom}>
+                              <span>
+                                Prazo:{' '}
+                                {opt.delivery_range
+                                  ? `${opt.delivery_range.min} a ${opt.delivery_range.max}`
+                                  : opt.delivery_time}{' '}
+                                dias úteis
+                              </span>
+                            </div>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                  )}
 
                   <div className={styles.summaryRowTotal}>
                     <span>Total com frete</span>
@@ -300,6 +487,7 @@ const CarrinhoPage = () => {
                     type="button"
                     className={styles.finishButton}
                     onClick={handleFinalizarCompra}
+                    disabled={finalizarDesabilitado}
                   >
                     Finalizar compra
                   </button>
