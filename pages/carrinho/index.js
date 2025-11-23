@@ -23,9 +23,10 @@ const CarrinhoPage = () => {
 
   // 🔹 Modal de estoque indisponível
   const [showEstoqueModal, setShowEstoqueModal] = useState(false);
-  const [estoqueModalMsg, setEstoqueModalMsg] = useState(
-    'Não temos mais esse item em estoque no momento.'
-  );
+  const [estoqueModalMsg, setEstoqueModalMsg] = useState('');
+
+  // 🔹 Modal de imagem ampliada
+  const [imagemAmpliada, setImagemAmpliada] = useState(null);
 
   const carregarCarrinho = async () => {
     try {
@@ -72,7 +73,6 @@ const CarrinhoPage = () => {
 
   const handleAumentarQuantidade = async (produto) => {
     try {
-      // limpa apenas mensagens normais
       setErrorMsg('');
       setSuccessMsg('');
 
@@ -80,17 +80,24 @@ const CarrinhoPage = () => {
         produtoId: produto._id,
         quantidade: 1,
       });
+
       await carregarCarrinho();
     } catch (e) {
       console.error('Erro ao aumentar quantidade:', e);
 
-      const msg = (e && e.message) || '';
-      // Se for erro de estoque, mostra apenas o modal e NÃO mexe no carrinho
-      if (msg.toLowerCase().includes('quantidade indisponível')) {
-        setEstoqueModalMsg('Não temos mais esse item em estoque no momento.');
+      // 🔹 Se for erro de estoque indisponível, mostra modal amigável
+      if (
+        e.status === 400 &&
+        typeof e.message === 'string' &&
+        e.message.includes('Quantidade indisponível')
+      ) {
+        setEstoqueModalMsg(
+          e.message ||
+            'Não temos mais unidades deste produto em estoque no momento.'
+        );
         setShowEstoqueModal(true);
       } else {
-        setErrorMsg(msg || 'Erro ao atualizar quantidade.');
+        setErrorMsg(e.message || 'Erro ao atualizar quantidade.');
       }
     }
   };
@@ -99,6 +106,7 @@ const CarrinhoPage = () => {
     try {
       setErrorMsg('');
       setSuccessMsg('');
+
       await removerItemCarrinhoApi(produto._id);
       await carregarCarrinho();
     } catch (e) {
@@ -141,6 +149,17 @@ const CarrinhoPage = () => {
     }
   };
 
+  // 🔹 Abrir imagem ampliada
+  const abrirImagem = (url) => {
+    if (!url) return;
+    setImagemAmpliada(url);
+  };
+
+  // 🔹 Fechar imagem ampliada
+  const fecharImagem = () => {
+    setImagemAmpliada(null);
+  };
+
   return (
     <div className={styles.pageContainer}>
       <Header />
@@ -181,6 +200,8 @@ const CarrinhoPage = () => {
                           src={produto.imagem}
                           alt={produto.nome}
                           className={styles.itemImage}
+                          onClick={() => abrirImagem(produto.imagem)}
+                          style={{ cursor: 'pointer' }}
                         />
                       ) : (
                         <div className={styles.itemNoImage}>
@@ -192,9 +213,7 @@ const CarrinhoPage = () => {
                     <div className={styles.itemInfo}>
                       <h2 className={styles.itemName}>{produto.nome}</h2>
                       <p className={styles.itemDetails}>
-                        {produto.modelo && (
-                          <span>{produto.modelo} · </span>
-                        )}
+                        {produto.modelo && <span>{produto.modelo} · </span>}
                         {produto.cor && <span>{produto.cor}</span>}
                       </p>
 
@@ -291,7 +310,9 @@ const CarrinhoPage = () => {
         </div>
       </main>
 
-      {/* 🔹 Modal de estoque indisponível */}
+      <Footer />
+
+      {/* 🔹 Modal de alerta de estoque indisponível */}
       {showEstoqueModal && (
         <div
           className={styles.modalOverlay}
@@ -308,15 +329,38 @@ const CarrinhoPage = () => {
             >
               ✕
             </button>
-            <h3 className={styles.modalTitle}>Atenção</h3>
+            <h3 className={styles.modalTitle}>Quantidade indisponível</h3>
             <p className={styles.modalText}>
-              {estoqueModalMsg}
+              {estoqueModalMsg ||
+                'Não temos mais unidades deste produto em estoque no momento.'}
             </p>
           </div>
         </div>
       )}
 
-      <Footer />
+      {/* 🔹 Modal de imagem ampliada */}
+      {imagemAmpliada && (
+        <div className={styles.modalOverlay} onClick={fecharImagem}>
+          <div
+            className={styles.modalImgBox}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className={styles.modalImgClose}
+              onClick={fecharImagem}
+            >
+              ✕
+            </button>
+
+            <img
+              src={imagemAmpliada}
+              alt="Imagem ampliada"
+              className={styles.modalImg}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
