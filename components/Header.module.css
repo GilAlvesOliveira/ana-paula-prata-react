@@ -118,6 +118,33 @@
   height: 25px;
 }
 
+/* Wrapper da sacola para o badge */
+.cartWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Badge com quantidade do carrinho */
+.cartBadge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #ff4d4f;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
 /* LINHA DO MEIO: BUSCA + LOGO */
 .bottomHeader {
   display: flex;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import styles from './Header.module.css';
 import { getUser, signOut } from '../services/storage';
@@ -13,40 +13,63 @@ const Header = () => {
   // 🔹 estado do campo de busca
   const [searchTerm, setSearchTerm] = useState('');
 
-  // 🔹 quantidade de itens no carrinho
+  // 🔹 quantidade total de itens no carrinho
   const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     const user = getUser();
     if (user) {
       setUsuario(user);
+    } else {
+      setUsuario(null);
+      setCartCount(0);
     }
   }, []);
 
-  // 🔹 carregar quantidade do carrinho quando usuário estiver definido
-  useEffect(() => {
-    const carregarCarrinhoHeader = async () => {
+  // 🔹 Busca quantidade do carrinho no backend
+  const carregarQuantidadeCarrinho = useCallback(async () => {
+    try {
       if (!usuario) {
         setCartCount(0);
         return;
       }
+      const resp = await getCarrinhoApi();
+      const itens = resp?.produtos || [];
+      const totalQtd = itens.reduce(
+        (sum, p) => sum + Number(p.quantidade || 0),
+        0
+      );
+      setCartCount(totalQtd);
+    } catch (e) {
+      console.error('Erro ao carregar quantidade do carrinho:', e);
+      // Em caso de erro, não derruba a UI
+    }
+  }, [usuario]);
 
-      try {
-        const resp = await getCarrinhoApi();
-        const produtos = resp.produtos || [];
-        const totalItens = produtos.reduce(
-          (sum, p) => sum + Number(p.quantidade || 0),
-          0
+  // Quando usuário logar/deslogar → recarrega quantidade
+  useEffect(() => {
+    carregarQuantidadeCarrinho();
+  }, [carregarQuantidadeCarrinho]);
+
+  // Ouve evento global "carrinhoAtualizado" (disparado no services/api.js)
+  useEffect(() => {
+    function handleCarrinhoAtualizado() {
+      carregarQuantidadeCarrinho();
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('carrinhoAtualizado', handleCarrinhoAtualizado);
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener(
+          'carrinhoAtualizado',
+          handleCarrinhoAtualizado
         );
-        setCartCount(totalItens);
-      } catch (e) {
-        console.error('Erro ao carregar carrinho no Header:', e);
-        setCartCount(0);
       }
     };
-
-    carregarCarrinhoHeader();
-  }, [usuario]);
+  }, [carregarQuantidadeCarrinho]);
 
   const handleOpenMenu = () => {
     setIsMenuOpen(true);
@@ -77,7 +100,7 @@ const Header = () => {
   };
 
   // Clique na sacola → carrinho (ou login se não logado)
-  const handleSacolaClick = () => {
+  const handleCarrinhoClick = () => {
     if (usuario) {
       router.push('/carrinho');
     } else {
@@ -88,14 +111,13 @@ const Header = () => {
   const handleLogout = () => {
     signOut();
     setUsuario(null);
+    setCartCount(0);
     setIsMenuOpen(false);
     router.push('/'); // sempre home ao deslogar
   };
 
   const firstName =
-    usuario && usuario.nome
-      ? usuario.nome.split(' ')[0]
-      : null;
+    usuario && usuario.nome ? usuario.nome.split(' ')[0] : null;
 
   // Botão "Olá, {nome}" dentro do menu lateral
   // se logado → home
@@ -186,19 +208,14 @@ const Header = () => {
             <img src="/imagens/menu.png" alt="Menu" className={styles.menu} />
           </button>
 
-          <div
-            className={styles.logoText}
-            onClick={handleLogoClick}
-          >
+          <div className={styles.logoText} onClick={handleLogoClick}>
             ANA PAULA PRATAS
           </div>
 
           <div className={styles.avatarAndBag}>
             {usuario && (
               <div className={styles.userInfo}>
-                <span className={styles.userName}>
-                  Olá, {firstName}
-                </span>
+                <span className={styles.userName}>Olá, {firstName}</span>
 
                 <button
                   type="button"
@@ -214,17 +231,21 @@ const Header = () => {
 
                 <button
                   type="button"
-                  className={`${styles.iconButton} ${styles.bagButton}`}
-                  onClick={handleSacolaClick}
+                  className={styles.iconButton}
+                  onClick={handleCarrinhoClick}
                 >
-                  <img
-                    src="/imagens/sacola.png"
-                    alt="Sacola"
-                    className={styles.sacola}
-                  />
-                  {cartCount > 0 && (
-                    <span className={styles.cartBadge}>{cartCount}</span>
-                  )}
+                  <div className={styles.cartWrapper}>
+                    <img
+                      src="/imagens/sacola.png"
+                      alt="Sacola"
+                      className={styles.sacola}
+                    />
+                    {cartCount > 0 && (
+                      <span className={styles.cartBadge}>
+                        {cartCount}
+                      </span>
+                    )}
+                  </div>
                 </button>
               </div>
             )}
@@ -362,19 +383,14 @@ const Header = () => {
                   </button>
                 </li>
                 <li>
-                  <button type="button">
-                    Promoções
-                  </button>
+                  <button type="button">Promoções</button>
                 </li>
               </ul>
             </nav>
 
             {/* Links extras + SAIR */}
             <div className={styles.menuExtraLinks}>
-              <button
-                type="button"
-                onClick={handleMinhaContaClick}
-              >
+              <button type="button" onClick={handleMinhaContaClick}>
                 Minha Conta
               </button>
 
@@ -392,15 +408,9 @@ const Header = () => {
                 Minhas Compras
               </button>
 
-              <button type="button">
-                Sobre nós
-              </button>
-              <button type="button">
-                Contato
-              </button>
-              <button type="button">
-                Informações
-              </button>
+              <button type="button">Sobre nós</button>
+              <button type="button">Contato</button>
+              <button type="button">Informações</button>
 
               {/* 🔹 Seção ADMIN – só aparece para usuário admin */}
               {usuario && usuario.role === 'admin' && (

@@ -21,6 +21,12 @@ const CarrinhoPage = () => {
 
   const [frete, setFrete] = useState('');
 
+  // 🔹 Modal de estoque indisponível
+  const [showEstoqueModal, setShowEstoqueModal] = useState(false);
+  const [estoqueModalMsg, setEstoqueModalMsg] = useState(
+    'Não temos mais esse item em estoque no momento.'
+  );
+
   const carregarCarrinho = async () => {
     try {
       setLoading(true);
@@ -66,6 +72,10 @@ const CarrinhoPage = () => {
 
   const handleAumentarQuantidade = async (produto) => {
     try {
+      // limpa apenas mensagens normais
+      setErrorMsg('');
+      setSuccessMsg('');
+
       await addItemCarrinhoApi({
         produtoId: produto._id,
         quantidade: 1,
@@ -73,12 +83,22 @@ const CarrinhoPage = () => {
       await carregarCarrinho();
     } catch (e) {
       console.error('Erro ao aumentar quantidade:', e);
-      setErrorMsg(e.message || 'Erro ao atualizar quantidade.');
+
+      const msg = (e && e.message) || '';
+      // Se for erro de estoque, mostra apenas o modal e NÃO mexe no carrinho
+      if (msg.toLowerCase().includes('quantidade indisponível')) {
+        setEstoqueModalMsg('Não temos mais esse item em estoque no momento.');
+        setShowEstoqueModal(true);
+      } else {
+        setErrorMsg(msg || 'Erro ao atualizar quantidade.');
+      }
     }
   };
 
   const handleDiminuirQuantidade = async (produto) => {
     try {
+      setErrorMsg('');
+      setSuccessMsg('');
       await removerItemCarrinhoApi(produto._id);
       await carregarCarrinho();
     } catch (e) {
@@ -270,6 +290,31 @@ const CarrinhoPage = () => {
           )}
         </div>
       </main>
+
+      {/* 🔹 Modal de estoque indisponível */}
+      {showEstoqueModal && (
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setShowEstoqueModal(false)}
+        >
+          <div
+            className={styles.modalContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className={styles.modalCloseButton}
+              onClick={() => setShowEstoqueModal(false)}
+            >
+              ✕
+            </button>
+            <h3 className={styles.modalTitle}>Atenção</h3>
+            <p className={styles.modalText}>
+              {estoqueModalMsg}
+            </p>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

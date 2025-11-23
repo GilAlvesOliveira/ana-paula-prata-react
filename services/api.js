@@ -36,6 +36,13 @@ async function apiRequest(endpoint, method = 'GET', body = null, token = null) {
   return data;
 }
 
+// 🔔 Dispara evento global indicando que o carrinho foi atualizado
+function dispatchCarrinhoAtualizado() {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event('carrinhoAtualizado'));
+  }
+}
+
 // =============== AUTENTICAÇÃO ===============
 
 // Cadastro com FormData (por causa do multer/upload no backend)
@@ -132,7 +139,6 @@ export async function buscarProdutosApi({ q }) {
 
 // =============== CARRINHO ===============
 
-// Buscar itens do carrinho do usuário logado
 export async function getCarrinhoApi() {
   const token = getToken();
   if (!token) {
@@ -141,46 +147,56 @@ export async function getCarrinhoApi() {
   return apiRequest('/api/carrinho/carrinho', 'GET', null, token);
 }
 
-// Adicionar item ao carrinho
 export async function addItemCarrinhoApi({ produtoId, quantidade }) {
   const token = getToken();
   if (!token) {
     throw { status: 401, message: 'Não autenticado' };
   }
-  return apiRequest(
+
+  const resp = await apiRequest(
     '/api/carrinho/carrinho',
     'POST',
     { produtoId, quantidade },
     token
   );
+
+  // Atualiza badge do carrinho
+  dispatchCarrinhoAtualizado();
+  return resp;
 }
 
-// Remover 1 unidade de um item do carrinho (ou remover totalmente se chegar em 0)
 export async function removerItemCarrinhoApi(produtoId) {
   const token = getToken();
   if (!token) {
     throw { status: 401, message: 'Não autenticado' };
   }
-  return apiRequest(
+
+  const resp = await apiRequest(
     '/api/carrinho/item',
     'DELETE',
     { produtoId },
     token
   );
+
+  // Atualiza badge do carrinho
+  dispatchCarrinhoAtualizado();
+  return resp;
 }
 
-// =============== PEDIDO ===============
-
-// Criar pedido com base no carrinho e frete informado
 export async function criarPedidoApi({ frete }) {
   const token = getToken();
   if (!token) {
     throw { status: 401, message: 'Não autenticado' };
   }
-  return apiRequest(
+
+  const resp = await apiRequest(
     '/api/carrinho/pedido',
     'POST',
     { frete },
     token
   );
+
+  // Carrinho é esvaziado no backend → atualiza badge
+  dispatchCarrinhoAtualizado();
+  return resp;
 }
