@@ -209,6 +209,7 @@ export async function removerItemCarrinhoApi(produtoId) {
   return resp;
 }
 
+// 👉 AGORA usando a rota nova /api/pedidos/pedidos
 export async function criarPedidoApi({ frete }) {
   const token = getToken();
   if (!token) {
@@ -216,7 +217,7 @@ export async function criarPedidoApi({ frete }) {
   }
 
   const resp = await apiRequest(
-    '/api/carrinho/pedido',
+    '/api/pedidos/pedidos',
     'POST',
     { frete },
     token
@@ -263,4 +264,20 @@ export async function calcularFreteMelhorEnvio({
 
   // A API retorna um array de opções
   return data;
+}
+
+// =============== MERCADO PAGO ===============
+
+export async function criarPreferenciaPagamentoApi({ total, pedidoId }) {
+  const token = getToken();
+  if (!token) {
+    throw { status: 401, message: 'Não autenticado' };
+  }
+
+  return apiRequest(
+    '/api/mercado_pago/preference',
+    'POST',
+    { total, pedidoId },
+    token
+  );
 }

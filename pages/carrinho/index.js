@@ -10,6 +10,7 @@ import {
   criarPedidoApi,
   calcularFreteMelhorEnvio,
   getUsuarioApi,
+  criarPreferenciaPagamentoApi,
 } from '../../services/api';
 import { useRouter } from 'next/router';
 
@@ -40,6 +41,10 @@ const CarrinhoPage = () => {
   // 🔹 Modal de imagem ampliada
   const [imagemAmpliada, setImagemAmpliada] = useState(null);
 
+  // 🔹 Pagamento pendente (para reabrir checkout)
+  const [pedidoPendente, setPedidoPendente] = useState(null);
+  const [loadingPagamento, setLoadingPagamento] = useState(false);
+
   const carregarCarrinho = async () => {
     try {
       setLoading(true);
@@ -68,7 +73,6 @@ const CarrinhoPage = () => {
       }
     } catch (e) {
       console.error('Erro ao buscar usuário para CEP:', e);
-      // se não tiver login ou CEP, só não permite calcular frete
     }
   };
 
@@ -76,6 +80,20 @@ const CarrinhoPage = () => {
     const init = async () => {
       await carregarCarrinho();
       await carregarUsuarioCep();
+
+      // Carrega pedido pendente do localStorage (se existir)
+      try {
+        const stored = localStorage.getItem('pedidoPendente');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.pedidoId && parsed.total != null) {
+            setPedidoPendente(parsed);
+          }
+        }
+      } catch (e) {
+        console.error('Erro ao ler pedido pendente do localStorage:', e);
+        localStorage.removeItem('pedidoPendente');
+      }
     };
     init();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -142,6 +160,29 @@ const CarrinhoPage = () => {
     }
   };
 
+  // 🔹 Abrir checkout do Mercado Pago em nova aba
+  const abrirCheckoutMercadoPago = async ({ pedidoId, total }) => {
+    try {
+      setLoadingPagamento(true);
+      const pref = await criarPreferenciaPagamentoApi({ total, pedidoId });
+
+      if (!pref || !pref.initPoint) {
+        setErrorMsg('Não foi possível iniciar o pagamento no momento.');
+        return;
+      }
+
+      // Abre o checkout do Mercado Pago em nova aba
+      window.open(pref.initPoint, '_blank');
+
+      setSuccessMsg('Pedido criado! Abrimos uma nova aba para o pagamento.');
+    } catch (e) {
+      console.error('Erro ao criar preferência de pagamento:', e);
+      setErrorMsg(e.message || 'Erro ao iniciar pagamento.');
+    } finally {
+      setLoadingPagamento(false);
+    }
+  };
+
   const handleFinalizarCompra = async () => {
     try {
       setErrorMsg('');
@@ -159,15 +200,32 @@ const CarrinhoPage = () => {
         return;
       }
 
+      // Cria o pedido no backend (rota /api/pedidos/pedidos)
       const resp = await criarPedidoApi({ frete: freteNumLocal });
 
-      setSuccessMsg(
-        `Pedido criado com sucesso! Número do pedido: ${resp.pedidoId}`
-      );
+      // Guarda pedido pendente no localStorage para poder reabrir depois
+      const pedidoInfo = {
+        pedidoId: resp.pedidoId,
+        total: resp.total,
+      };
+
+      try {
+        localStorage.setItem('pedidoPendente', JSON.stringify(pedidoInfo));
+      } catch (e) {
+        console.error('Erro ao salvar pedido pendente no localStorage:', e);
+      }
+      setPedidoPendente(pedidoInfo);
+
+      // Limpa frete/calculadora na tela
       setFrete('');
       setFreteOpcoes([]);
       setFreteSelecionadoId(null);
+
+      // Carrinho é esvaziado no backend; recarrega lista
       await carregarCarrinho();
+
+      // Abre Mercado Pago em nova aba
+      await abrirCheckoutMercadoPago(pedidoInfo);
     } catch (e) {
       console.error('Erro ao finalizar compra:', e);
       if (e.status === 401) {
@@ -176,6 +234,12 @@ const CarrinhoPage = () => {
         setErrorMsg(e.message || 'Erro ao finalizar compra.');
       }
     }
+  };
+
+  // 🔹 Reabrir pagamento para pedido pendente (sem criar novo pedido)
+  const handleReabrirPagamentoPendente = async () => {
+    if (!pedidoPendente) return;
+    await abrirCheckoutMercadoPago(pedidoPendente);
   };
 
   // 🔹 Calcula dimensões/peso do pacote considerando vários produtos
@@ -198,7 +262,7 @@ const CarrinhoPage = () => {
       pesoTotal += peso * qtd;
     });
 
-    // Valores mínimos de segurança (Correios/transportadoras não aceitam 0)
+    // Valores mínimos de segurança
     if (larguraMax <= 0) larguraMax = 10;
     if (comprimentoMax <= 0) comprimentoMax = 15;
     if (alturaTotal <= 0) alturaTotal = 2;
@@ -293,6 +357,7 @@ const CarrinhoPage = () => {
   const finalizarDesabilitado =
     loading ||
     loadingFrete ||
+    loadingPagamento ||
     !produtos.length ||
     freteNum <= 0;
 
@@ -489,11 +554,37 @@ const CarrinhoPage = () => {
                     onClick={handleFinalizarCompra}
                     disabled={finalizarDesabilitado}
                   >
-                    Finalizar compra
+                    {loadingPagamento ? 'Iniciando pagamento...' : 'Finalizar compra'}
                   </button>
                 </div>
               </section>
             </>
+          )}
+
+          {/* Se tiver pedido pendente, mostra atalho para pagar */}
+          {!loading && !errorMsg && pedidoPendente && (
+            <section className={styles.pendingSection}>
+              <div className={styles.pendingBox}>
+                <h2 className={styles.pendingTitle}>Pagamento pendente</h2>
+                <p className={styles.pendingText}>
+                  Você possui um pedido pendente de pagamento.
+                </p>
+                <p className={styles.pendingTextSmall}>
+                  Número do pedido: <strong>{pedidoPendente.pedidoId}</strong>
+                  <br />
+                  Valor:{' '}
+                  <strong>{formatarPreco(pedidoPendente.total)}</strong>
+                </p>
+                <button
+                  type="button"
+                  className={styles.pendingButton}
+                  onClick={handleReabrirPagamentoPendente}
+                  disabled={loadingPagamento}
+                >
+                  {loadingPagamento ? 'Abrindo pagamento...' : 'Pagar este pedido'}
+                </button>
+              </div>
+            </section>
           )}
         </div>
       </main>

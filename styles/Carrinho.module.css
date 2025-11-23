@@ -469,3 +469,61 @@
     margin: 0 16px;
   }
 }
+
+/* ===== PAGAMENTO PENDENTE ===== */
+.pendingSection {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.pendingBox {
+  width: 100%;
+  max-width: 420px;
+  background: #111;
+  border-radius: 14px;
+  border: 1px solid rgba(200, 200, 200, 0.35);
+  padding: 16px 18px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+}
+
+.pendingTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.pendingText {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.pendingTextSmall {
+  font-size: 13px;
+  color: #cccccc;
+  margin-bottom: 10px;
+}
+
+.pendingButton {
+  margin-top: 4px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  background: #f5f5f5;
+  color: #000;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.pendingButton:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.pendingButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
