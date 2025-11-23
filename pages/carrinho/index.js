@@ -140,7 +140,7 @@ const CarrinhoPage = () => {
     }
   };
 
-  // 🔹 Finalizar compra: cria pedido + abre Mercado Pago em nova aba
+  // 🔹 Finalizar compra: cria pedido + abre Mercado Pago em nova aba + vai para /pendente
   const handleFinalizarCompra = async () => {
     try {
       setErrorMsg('');
@@ -174,7 +174,7 @@ const CarrinhoPage = () => {
       setFreteSelecionadoId(null);
       await carregarCarrinho();
 
-      // 2) Cria preferência de pagamento no Mercado Pago
+      // 2) Criar preferência de pagamento no Mercado Pago
       try {
         const pref = await criarPreferenciaPagamentoApi({
           total,
@@ -182,11 +182,14 @@ const CarrinhoPage = () => {
         });
 
         if (pref && pref.initPoint) {
-          window.open(pref.initPoint, '_blank'); // abre checkout em nova aba
+          // abre checkout em nova aba
+          window.open(pref.initPoint, '_blank');
+
+          // redireciona o site para a página de status pendente
+          window.location.href = `/pendente?pedido=${pedidoId}`;
         }
       } catch (e) {
         console.error('Erro ao criar preferência de pagamento:', e);
-        // não derruba a compra, apenas avisa que não conseguiu abrir o pagamento
         setErrorMsg(
           'Pedido criado, mas houve um erro ao abrir o pagamento. Acesse "Meus pedidos" para tentar pagar novamente.'
         );
