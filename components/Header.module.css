@@ -80,6 +80,30 @@
   align-items: center;
 }
 
+/* Botão da sacola (para posicionar o badge) */
+.bagButton {
+  position: relative;
+}
+
+/* Badge de quantidade do carrinho */
+.cartBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #ff4d4d;
+  color: #ffffff;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+}
+
 /* Avatar redondo */
 .avatar {
   width: 32px;

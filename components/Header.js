@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import styles from './Header.module.css';
 import { getUser, signOut } from '../services/storage';
+import { getCarrinhoApi } from '../services/api';
 
 const Header = () => {
   const router = useRouter();
@@ -12,12 +13,40 @@ const Header = () => {
   // 🔹 estado do campo de busca
   const [searchTerm, setSearchTerm] = useState('');
 
+  // 🔹 quantidade de itens no carrinho
+  const [cartCount, setCartCount] = useState(0);
+
   useEffect(() => {
     const user = getUser();
     if (user) {
       setUsuario(user);
     }
   }, []);
+
+  // 🔹 carregar quantidade do carrinho quando usuário estiver definido
+  useEffect(() => {
+    const carregarCarrinhoHeader = async () => {
+      if (!usuario) {
+        setCartCount(0);
+        return;
+      }
+
+      try {
+        const resp = await getCarrinhoApi();
+        const produtos = resp.produtos || [];
+        const totalItens = produtos.reduce(
+          (sum, p) => sum + Number(p.quantidade || 0),
+          0
+        );
+        setCartCount(totalItens);
+      } catch (e) {
+        console.error('Erro ao carregar carrinho no Header:', e);
+        setCartCount(0);
+      }
+    };
+
+    carregarCarrinhoHeader();
+  }, [usuario]);
 
   const handleOpenMenu = () => {
     setIsMenuOpen(true);
@@ -42,6 +71,15 @@ const Header = () => {
   const handleAvatarClick = () => {
     if (usuario) {
       router.push('/usuario');
+    } else {
+      router.push('/login');
+    }
+  };
+
+  // Clique na sacola → carrinho (ou login se não logado)
+  const handleSacolaClick = () => {
+    if (usuario) {
+      router.push('/carrinho');
     } else {
       router.push('/login');
     }
@@ -176,13 +214,17 @@ const Header = () => {
 
                 <button
                   type="button"
-                  className={styles.iconButton}
+                  className={`${styles.iconButton} ${styles.bagButton}`}
+                  onClick={handleSacolaClick}
                 >
                   <img
                     src="/imagens/sacola.png"
                     alt="Sacola"
                     className={styles.sacola}
                   />
+                  {cartCount > 0 && (
+                    <span className={styles.cartBadge}>{cartCount}</span>
+                  )}
                 </button>
               </div>
             )}
