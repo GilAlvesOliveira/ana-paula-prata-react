@@ -398,15 +398,16 @@ const Header = () => {
                 type="button"
                 onClick={() => {
                   if (usuario) {
-                    router.push('/minhas-compras');
+                    router.push('/meus-pedidos');
                   } else {
                     router.push('/login');
                   }
                   setIsMenuOpen(false);
                 }}
               >
-                Minhas Compras
+                Meus pedidos
               </button>
+
 
               <button type="button">Sobre nós</button>
               <button type="button">Contato</button>

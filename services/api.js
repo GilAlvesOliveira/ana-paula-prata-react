@@ -281,3 +281,28 @@ export async function criarPreferenciaPagamentoApi({ total, pedidoId }) {
     token
   );
 }
+
+// =============== PEDIDOS ===============
+
+export async function listarPedidosApi() {
+  const token = getToken();
+  if (!token) {
+    throw { status: 401, message: 'Não autenticado' };
+  }
+
+  return apiRequest('/api/pedidos/pedidos', 'GET', null, token);
+}
+
+export async function gerarPreferenciaPagamentoApi({ pedidoId, total }) {
+  const token = getToken();
+  if (!token) {
+    throw { status: 401, message: 'Não autenticicado' };
+  }
+
+  return apiRequest(
+    '/api/mercado_pago/preference',
+    'POST',
+    { pedidoId, total },
+    token
+  );
+}
