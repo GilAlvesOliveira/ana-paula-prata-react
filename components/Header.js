@@ -26,7 +26,7 @@ const Header = () => {
     }
   }, []);
 
-  // 🔹 Busca quantidade do carrinho no backend
+  // 🔹 Busca quantidade do carrinho no backend (usado só em momentos pontuais)
   const carregarQuantidadeCarrinho = useCallback(async () => {
     try {
       if (!usuario) {
@@ -46,15 +46,18 @@ const Header = () => {
     }
   }, [usuario]);
 
-  // Quando usuário logar/deslogar → recarrega quantidade
+  // Quando usuário logar/deslogar → recarrega quantidade uma vez
   useEffect(() => {
     carregarQuantidadeCarrinho();
   }, [carregarQuantidadeCarrinho]);
 
   // Ouve evento global "carrinhoAtualizado" (disparado no services/api.js)
   useEffect(() => {
-    function handleCarrinhoAtualizado() {
-      carregarQuantidadeCarrinho();
+    function handleCarrinhoAtualizado(event) {
+      // ⚠️ Importante: NÃO chamar getCarrinhoApi aqui senão entra em loop.
+      // Usamos o total que já vem no evento.
+      const total = event?.detail?.totalItens ?? 0;
+      setCartCount(total);
     }
 
     if (typeof window !== 'undefined') {
@@ -69,7 +72,7 @@ const Header = () => {
         );
       }
     };
-  }, [carregarQuantidadeCarrinho]);
+  }, []);
 
   const handleOpenMenu = () => {
     setIsMenuOpen(true);
@@ -152,7 +155,7 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
-  // 🔹 Admin → Pedidos (página futura)
+  // 🔹 Admin → Pedidos
   const handleAdminPedidosClick = () => {
     if (usuario && usuario.role === 'admin') {
       router.push('/admin/pedidos');
@@ -162,7 +165,7 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
-  // 🔹 Admin → Usuários (página futura)
+  // 🔹 Admin → Usuários
   const handleAdminUsuariosClick = () => {
     if (usuario && usuario.role === 'admin') {
       router.push('/admin/usuarios');
@@ -407,7 +410,6 @@ const Header = () => {
               >
                 Meus pedidos
               </button>
-
 
               <button type="button">Sobre nós</button>
               <button type="button">Contato</button>
