@@ -1,0 +1,228 @@
+/* styles/StatusPagamento.module.css */
+
+.pageContainer {
+  min-height: 100vh;
+  background: #000;
+  color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 32px 16px 40px;
+}
+
+.card {
+  width: 100%;
+  max-width: 560px;
+  background: rgba(10, 10, 10, 0.94);
+  border-radius: 18px;
+  border: 1px solid rgba(180, 180, 180, 0.28);
+  box-shadow: 0 0 28px rgba(0, 0, 0, 0.85);
+  padding: 26px 22px 24px;
+  box-sizing: border-box;
+}
+
+/* Cabeçalho do card */
+.headerRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.iconCircle {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+/* Ícones por status */
+.iconSuccess {
+  background: rgba(0, 150, 60, 0.18);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.5);
+}
+
+.iconPending {
+  background: rgba(234, 179, 8, 0.12);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.6);
+}
+
+.iconFailure {
+  background: rgba(220, 38, 38, 0.12);
+  color: #fecaca;
+  border: 1px solid rgba(248, 113, 113, 0.7);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #c4c4c4;
+}
+
+/* Mensagens principais */
+.statusText {
+  font-size: 15px;
+  margin-top: 8px;
+  margin-bottom: 10px;
+}
+
+.successText {
+  color: #bbf7d0;
+}
+
+.pendingText {
+  color: #fde68a;
+}
+
+.failureText {
+  color: #fecaca;
+}
+
+/* Info do pedido */
+.infoBox {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(120, 120, 120, 0.4);
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.infoLabel {
+  color: #d4d4d4;
+}
+
+.infoValue {
+  font-weight: 600;
+}
+
+.highlight {
+  font-weight: 600;
+  color: #e5e5e5;
+}
+
+/* Status tag */
+.statusTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.statusTagSuccess {
+  background: rgba(16, 185, 129, 0.08);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.5);
+}
+
+.statusTagPending {
+  background: rgba(234, 179, 8, 0.08);
+  color: #facc15;
+  border: 1px solid rgba(234, 179, 8, 0.5);
+}
+
+.statusTagFailure {
+  background: rgba(220, 38, 38, 0.08);
+  color: #fecaca;
+  border: 1px solid rgba(248, 113, 113, 0.6);
+}
+
+/* Ações */
+.actions {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.primaryButton,
+.secondaryButton {
+  flex: 1;
+  min-width: 140px;
+  padding: 9px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: opacity 0.18s ease, transform 0.08s ease;
+}
+
+.primaryButton {
+  border: none;
+  background: #f5f5f5;
+  color: #000;
+}
+
+.secondaryButton {
+  border: 1px solid #d4d4d4;
+  background: transparent;
+  color: #f5f5f5;
+}
+
+.primaryButton:hover,
+.secondaryButton:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Mensagens de erro / info */
+.errorText {
+  color: #fecaca;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.infoText {
+  font-size: 13px;
+  color: #d4d4d4;
+  margin-top: 8px;
+}
+
+/* ===== RESPONSIVO ===== */
+
+@media (max-width: 768px) {
+  .card {
+    padding: 22px 16px 20px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+}
