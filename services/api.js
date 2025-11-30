@@ -285,3 +285,17 @@ export async function gerarPreferenciaPagamentoApi({ pedidoId, total }) {
     token
   );
 }
+
+export async function atualizarEnvioPedidoApi({ pedidoId, enviado }) {
+  const token = getToken();
+  if (!token) {
+    throw { status: 401, message: 'Não autenticado' };
+  }
+
+  return apiRequest(
+    `/api/pedidos/pedidos?_id=${pedidoId}`,
+    'PUT',
+    { enviado },
+    token
+  );
+}

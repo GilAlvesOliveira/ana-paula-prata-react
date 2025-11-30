@@ -7,7 +7,7 @@ const Footer = () => {
 
       {/* Instagram */}
       <a
-        href="https://www.instagram.com/seuinstagram" // Troque pelo correto
+        href="https://www.instagram.com/anapaula_pratajoias/" // Troque pelo correto
         target="_blank"
         rel="noopener noreferrer"
         className={styles.row}
