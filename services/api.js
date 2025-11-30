@@ -89,6 +89,18 @@ export async function updateUsuarioApi(formData) {
   return apiRequest('/api/usuario/usuario', 'PUT', formData, token);
 }
 
+// =============== USUÁRIOS (ADMIN) ===============
+
+export async function listarUsuariosAdminApi() {
+  const token = getToken();
+  if (!token) {
+    throw { status: 401, message: 'Não autenticado' };
+  }
+
+  // rota: src/pages/api/admin/usuarios/usuarios.ts
+  return apiRequest('/api/admin/usuarios', 'GET', null, token);
+}
+
 // =============== PRODUTOS (ADMIN) ===============
 
 // Listar produtos
