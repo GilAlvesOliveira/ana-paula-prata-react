@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/Login.module.css';
-import { resetPassword } from '../services/api';
+import { resetPasswordApi } from '../services/api';
 
 export default function ResetPassword() {
   const router = useRouter();
@@ -53,7 +53,7 @@ export default function ResetPassword() {
     try {
       setLoading(true);
 
-      const resp = await resetPassword({
+      const resp = await resetPasswordApi({
         email,
         token,
         novaSenha,

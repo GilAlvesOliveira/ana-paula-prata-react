@@ -75,12 +75,12 @@ export async function loginUser({ email, senha }) {
 
 // Esqueci minha senha
 export async function forgotPasswordApi(email) {
-  return apiRequest('/auth/forgot-password', 'POST', { email });
+  return apiRequest('/api/auth/forgot-password', 'POST', { email });
 }
 
 // Redefinir senha
 export async function resetPasswordApi({ email, token, novaSenha }) {
-  return apiRequest('/auth/reset-password', 'POST', { email, token, novaSenha });
+  return apiRequest('/api/auth/reset-password', 'POST', { email, token, novaSenha });
 }
 
 // =============== USUÁRIO ===============

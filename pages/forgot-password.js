@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import styles from '../styles/Login.module.css';
-import { forgotPassword } from '../services/api';
+import { forgotPasswordApi } from '../services/api';
 
 export default function ForgotPassword() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function ForgotPassword() {
 
     try {
       setLoading(true);
-      const resp = await forgotPassword(email);
+      const resp = await forgotPasswordApi(email);
 
       setMensagem(
         resp.msg ||
