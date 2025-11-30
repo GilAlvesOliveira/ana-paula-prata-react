@@ -13,7 +13,7 @@ const AdminPedidosPage = () => {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState('');
   const [infoMsg, setInfoMsg] = useState('');
-  const [loadingEnvio, setLoadingEnvio] = useState(null); // id do pedido sendo atualizado
+  const [loadingEnvio, setLoadingEnvio] = useState(null);
 
   const [imagemAmpliada, setImagemAmpliada] = useState(null);
 
@@ -78,7 +78,6 @@ const AdminPedidosPage = () => {
   };
 
   const handleToggleEnvio = async (pedido) => {
-    // Só permite marcar/desmarcar se status for aprovado
     if (String(pedido.status || '').toLowerCase() !== 'aprovado') return;
 
     const novoValor = !pedido.enviado;
@@ -93,7 +92,6 @@ const AdminPedidosPage = () => {
         enviado: novoValor,
       });
 
-      // Atualiza estado local
       setPedidos((prev) =>
         prev.map((p) =>
           p._id === pedido._id
@@ -145,7 +143,7 @@ const AdminPedidosPage = () => {
               {pedidos.map((pedido) => (
                 <div key={pedido._id} className={styles.pedidoCard}>
                   <div className={styles.pedidoHeader}>
-                    {/* Lado esquerdo: pedido + cliente */}
+                    {/* Lado esquerdo */}
                     <div>
                       <span className={styles.pedidoId}>
                         Pedido #{pedido._id}
@@ -154,32 +152,41 @@ const AdminPedidosPage = () => {
                         Criado em: {formatarData(pedido.criadoEm)}
                       </span>
 
-                      {/* Info do cliente */}
+                      {/* Informações do cliente */}
                       <div className={styles.clienteInfo}>
                         <span className={styles.clienteNome}>
                           Cliente:{' '}
                           {pedido.usuarioInfo?.nome ||
                             'Nome não disponível'}
                         </span>
+
                         {pedido.usuarioInfo?.email && (
                           <span className={styles.clienteContato}>
                             E-mail: {pedido.usuarioInfo.email}
                           </span>
                         )}
+
                         {pedido.usuarioInfo?.telefone && (
                           <span className={styles.clienteContato}>
                             Telefone: {pedido.usuarioInfo.telefone}
                           </span>
                         )}
+
                         {pedido.usuarioInfo?.endereco && (
                           <span className={styles.clienteContato}>
                             Endereço: {pedido.usuarioInfo.endereco}
                           </span>
                         )}
+
+                        {pedido.usuarioInfo?.cep && (
+                          <span className={styles.clienteContato}>
+                            CEP: {pedido.usuarioInfo.cep}
+                          </span>
+                        )}
                       </div>
                     </div>
 
-                    {/* Lado direito: status + envio */}
+                    {/* Status + envio */}
                     <div className={styles.pedidoStatusArea}>
                       <span
                         className={`${styles.pedidoStatus} ${getStatusLabelClass(
@@ -189,7 +196,6 @@ const AdminPedidosPage = () => {
                         {String(pedido.status || '').toUpperCase()}
                       </span>
 
-                      {/* Controle de envio */}
                       <div className={styles.envioArea}>
                         {String(pedido.status || '').toLowerCase() !==
                         'aprovado' ? (
@@ -222,7 +228,7 @@ const AdminPedidosPage = () => {
                     </div>
                   </div>
 
-                  {/* Produtos do pedido */}
+                  {/* Produtos */}
                   <div className={styles.produtosSection}>
                     {pedido.produtos && pedido.produtos.length > 0 ? (
                       pedido.produtos.map((item, idx) => (
@@ -290,7 +296,7 @@ const AdminPedidosPage = () => {
                     )}
                   </div>
 
-                  {/* Resumo financeiro do pedido */}
+                  {/* Resumo */}
                   <div className={styles.pedidoResumo}>
                     <div className={styles.resumoLinha}>
                       <span>Valor dos produtos</span>
@@ -321,7 +327,6 @@ const AdminPedidosPage = () => {
 
       <Footer />
 
-      {/* Modal de imagem ampliada */}
       {imagemAmpliada && (
         <div className={styles.modalOverlay} onClick={fecharImagem}>
           <div
