@@ -1,4 +1,4 @@
-import { getToken } from './storage';
+import { getToken, signOut } from './storage';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 const MELHOR_ENVIO_BASE_URL =
@@ -28,6 +28,20 @@ async function apiRequest(endpoint, method = 'GET', body = null, token = null) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
+    if (response.status === 401) {
+      if (typeof window !== 'undefined') {
+        try {
+          // Limpa dados do usuário / token
+          signOut();
+        } catch (e) {
+          console.error('Erro ao executar signOut após 401:', e);
+        }
+
+        // Redireciona para a tela de login
+        window.location.href = '/login';
+      }
+    }
+
     throw {
       status: response.status,
       message: data.erro || data.msg || 'Erro na requisição',
@@ -97,7 +111,6 @@ export async function listarUsuariosAdminApi() {
     throw { status: 401, message: 'Não autenticado' };
   }
 
-  // rota: src/pages/api/admin/usuarios/usuarios.ts
   return apiRequest('/api/admin/usuarios', 'GET', null, token);
 }
 
@@ -293,9 +306,8 @@ export async function gerarPreferenciaPagamentoApi({ pedidoId, total }) {
   return apiRequest(
     '/api/mercado_pago/preference',
     'POST',
-    { pedidoId, total },
-    token
-  );
+    { pedidoId, total }
+  , token);
 }
 
 export async function atualizarEnvioPedidoApi({ pedidoId, enviado }) {
