@@ -1,4 +1,3 @@
-// services/api.js
 import { getToken } from './storage';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
@@ -8,7 +7,6 @@ const MELHOR_ENVIO_BASE_URL =
 async function apiRequest(endpoint, method = 'GET', body = null, token = null) {
   const headers = {};
 
-  // Só coloca Content-Type JSON se NÃO for FormData
   if (!(body instanceof FormData)) {
     headers['Content-Type'] = 'application/json';
   }
@@ -39,7 +37,6 @@ async function apiRequest(endpoint, method = 'GET', body = null, token = null) {
   return data;
 }
 
-// Dispara evento global para o Header atualizar o badge do carrinho
 function dispararEventoCarrinho(totalItens) {
   if (typeof window !== 'undefined') {
     window.dispatchEvent(
@@ -153,13 +150,6 @@ export async function getCarrinhoApi() {
   }
 
   const data = await apiRequest('/api/carrinho/carrinho', 'GET', null, token);
-
-  const totalItens = (data.produtos || []).reduce(
-    (sum, p) => sum + Number(p.quantidade || 0),
-    0
-  );
-  dispararEventoCarrinho(totalItens);
-
   return data;
 }
 
@@ -176,12 +166,7 @@ export async function addItemCarrinhoApi({ produtoId, quantidade }) {
     token
   );
 
-  // Atualiza badge do carrinho após adicionar
-  try {
-    await getCarrinhoApi();
-  } catch (e) {
-    console.error('Erro ao atualizar quantidade do carrinho:', e);
-  }
+  dispararEventoCarrinho();
 
   return resp;
 }
@@ -199,12 +184,7 @@ export async function removerItemCarrinhoApi(produtoId) {
     token
   );
 
-  // Atualiza badge do carrinho após remover
-  try {
-    await getCarrinhoApi();
-  } catch (e) {
-    console.error('Erro ao atualizar quantidade do carrinho:', e);
-  }
+  dispararEventoCarrinho();
 
   return resp;
 }
@@ -223,7 +203,6 @@ export async function criarPedidoApi({ frete }) {
     token
   );
 
-  // Depois do pedido, carrinho fica vazio
   dispararEventoCarrinho(0);
 
   return resp;

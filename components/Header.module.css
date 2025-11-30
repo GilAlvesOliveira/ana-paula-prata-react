@@ -556,3 +556,108 @@
     opacity: 1;
   }
 }
+
+/* ========== MODAIS DE INFORMAÇÃO (CONTATO / SOBRE NÓS) ========== */
+
+.infoModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 120;
+}
+
+.infoModalBox {
+  width: 100%;
+  max-width: 420px;
+  background: #111;
+  border-radius: 18px;
+  border: 1px solid rgba(220, 220, 220, 0.2);
+  padding: 20px 18px 18px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+  position: relative;
+  animation: fadeInScale 0.25s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.infoModalClose {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: #f5f5f5;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.infoModalTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: center;
+  color: #f5f5f5;
+  letter-spacing: 0.05em;
+}
+
+.infoModalGroup {
+  margin-bottom: 10px;
+}
+
+.infoModalLabel {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #bcbcbc;
+  margin-bottom: 4px;
+}
+
+.infoModalList {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.infoModalList li {
+  margin-bottom: 6px;
+}
+
+.infoModalLink {
+  color: #e8e8e8;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.infoModalLink:hover {
+  text-decoration: underline;
+  color: #ffffff;
+}
+
+.infoModalText {
+  font-size: 14px;
+  color: #dedede;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.infoModalTextHighlight {
+  font-size: 14px;
+  color: #f5f5f5;
+  line-height: 1.6;
+  margin-top: 12px;
+  font-weight: 600;
+}

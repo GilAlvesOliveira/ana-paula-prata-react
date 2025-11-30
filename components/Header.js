@@ -16,6 +16,10 @@ const Header = () => {
   // 🔹 quantidade total de itens no carrinho
   const [cartCount, setCartCount] = useState(0);
 
+  // 🔹 modais de informação
+  const [showContatoModal, setShowContatoModal] = useState(false);
+  const [showSobreModal, setShowSobreModal] = useState(false);
+
   useEffect(() => {
     const user = getUser();
     if (user) {
@@ -26,7 +30,7 @@ const Header = () => {
     }
   }, []);
 
-  // 🔹 Busca quantidade do carrinho no backend (usado só em momentos pontuais)
+  // 🔹 Busca quantidade do carrinho no backend
   const carregarQuantidadeCarrinho = useCallback(async () => {
     try {
       if (!usuario) {
@@ -46,18 +50,15 @@ const Header = () => {
     }
   }, [usuario]);
 
-  // Quando usuário logar/deslogar → recarrega quantidade uma vez
+  // Quando usuário logar/deslogar → recarrega quantidade
   useEffect(() => {
     carregarQuantidadeCarrinho();
   }, [carregarQuantidadeCarrinho]);
 
   // Ouve evento global "carrinhoAtualizado" (disparado no services/api.js)
   useEffect(() => {
-    function handleCarrinhoAtualizado(event) {
-      // ⚠️ Importante: NÃO chamar getCarrinhoApi aqui senão entra em loop.
-      // Usamos o total que já vem no evento.
-      const total = event?.detail?.totalItens ?? 0;
-      setCartCount(total);
+    function handleCarrinhoAtualizado() {
+      carregarQuantidadeCarrinho();
     }
 
     if (typeof window !== 'undefined') {
@@ -72,7 +73,7 @@ const Header = () => {
         );
       }
     };
-  }, []);
+  }, [carregarQuantidadeCarrinho]);
 
   const handleOpenMenu = () => {
     setIsMenuOpen(true);
@@ -198,6 +199,18 @@ const Header = () => {
     }
   };
 
+  // 🔹 Abrir modal de contato
+  const handleContatoClick = () => {
+    setIsMenuOpen(false);
+    setShowContatoModal(true);
+  };
+
+  // 🔹 Abrir modal Sobre nós
+  const handleSobreClick = () => {
+    setIsMenuOpen(false);
+    setShowSobreModal(true);
+  };
+
   return (
     <>
       <header className={styles.header}>
@@ -244,9 +257,7 @@ const Header = () => {
                       className={styles.sacola}
                     />
                     {cartCount > 0 && (
-                      <span className={styles.cartBadge}>
-                        {cartCount}
-                      </span>
+                      <span className={styles.cartBadge}>{cartCount}</span>
                     )}
                   </div>
                 </button>
@@ -408,12 +419,26 @@ const Header = () => {
                   setIsMenuOpen(false);
                 }}
               >
-                Meus pedidos
+                Meus Pedidos
               </button>
 
-              <button type="button">Sobre nós</button>
-              <button type="button">Contato</button>
-              <button type="button">Informações</button>
+              <button
+                type="button"
+                onClick={handleSobreClick}
+              >
+                Sobre nós
+              </button>
+
+              <button
+                type="button"
+                onClick={handleContatoClick}
+              >
+                Contato
+              </button>
+
+              <button type="button">
+                Informações
+              </button>
 
               {/* 🔹 Seção ADMIN – só aparece para usuário admin */}
               {usuario && usuario.role === 'admin' && (
@@ -451,6 +476,117 @@ const Header = () => {
                 </button>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL CONTATO */}
+      {showContatoModal && (
+        <div
+          className={styles.infoModalOverlay}
+          onClick={() => setShowContatoModal(false)}
+        >
+          <div
+            className={styles.infoModalBox}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className={styles.infoModalClose}
+              onClick={() => setShowContatoModal(false)}
+            >
+              ✕
+            </button>
+
+            <h3 className={styles.infoModalTitle}>Contato</h3>
+
+            <div className={styles.infoModalGroup}>
+              <span className={styles.infoModalLabel}>WhatsApp</span>
+              <ul className={styles.infoModalList}>
+                <li>
+                  <a
+                    href="https://wa.me/5515998228365"
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.infoModalLink}
+                  >
+                    15 99822-8365
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://wa.me/5515997291902"
+                    target="_blank"
+                    rel="noreferrer"
+                    className={styles.infoModalLink}
+                  >
+                    15 99729-1902
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div className={styles.infoModalGroup}>
+              <span className={styles.infoModalLabel}>Instagram</span>
+              <a
+                href="https://www.instagram.com/anapaula_pratajoias/"
+                target="_blank"
+                rel="noreferrer"
+                className={styles.infoModalLink}
+              >
+                @anapaula_pratajoias
+              </a>
+            </div>
+
+            <div className={styles.infoModalGroup}>
+              <span className={styles.infoModalLabel}>Endereço</span>
+              <p className={styles.infoModalText}>
+                R. Sete de Setembro, 38 - Centro, Araçoiaba da Serra - SP, 18190-000
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL SOBRE NÓS */}
+      {showSobreModal && (
+        <div
+          className={styles.infoModalOverlay}
+          onClick={() => setShowSobreModal(false)}
+        >
+          <div
+            className={styles.infoModalBox}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className={styles.infoModalClose}
+              onClick={() => setShowSobreModal(false)}
+            >
+              ✕
+            </button>
+
+            <h3 className={styles.infoModalTitle}>Sobre nós</h3>
+
+            <p className={styles.infoModalText}>
+              A <strong>ANA PAULA PRATAS</strong> é uma joalheria especializada em
+              prata e semijoias, com loja física em Araçoiaba da Serra desde <strong>2010</strong>.
+            </p>
+
+            <p className={styles.infoModalText}>
+              Cada peça é escolhida com cuidado para representar elegância, brilho e
+              momentos especiais da vida das nossas clientes.
+            </p>
+
+            <p className={styles.infoModalText}>
+              Aqui você encontra atendimento próximo, joias com acabamento diferenciado
+              e todo o carinho de uma loja que cresceu junto com a cidade e com
+              suas histórias.
+            </p>
+
+            <p className={styles.infoModalTextHighlight}>
+              Sinta-se em casa. Sua próxima joia favorita pode estar a um clique de distância. ✨
+            </p>
           </div>
         </div>
       )}
