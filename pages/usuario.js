@@ -171,8 +171,8 @@ export default function UsuarioPage() {
   };
 
   // 🔹 botão "Minhas Compras" na página do usuário
-  const handleGoToMinhasCompras = () => {
-    router.push('/minhas-compras');
+  const handleGoToMeusPedidos = () => {
+    router.push('/meus-pedidos');
   };
 
   if (!usuario) {
@@ -273,9 +273,9 @@ export default function UsuarioPage() {
               <button
                 type="button"
                 className={styles.secondaryButton}
-                onClick={handleGoToMinhasCompras}
+                onClick={handleGoToMeusPedidos}
               >
-                Minhas Compras
+                Meus Pedidos
               </button>
             </div>
           )}
