@@ -88,7 +88,7 @@ const Header = () => {
     setIsMenuOpen(false);
   };
 
-  // Clique no logo de texto "ANA PAULA PRATAS" → sempre home
+  // Clique no logo de texto "ANA PAULA PRATAS JOIAS" → sempre home
   const handleLogoClick = () => {
     router.push('/');
     setIsMenuOpen(false);
@@ -225,7 +225,7 @@ const Header = () => {
           </button>
 
           <div className={styles.logoText} onClick={handleLogoClick}>
-            ANA PAULA PRATAS
+            ANA PAULA PRATAS JOIAS
           </div>
 
           <div className={styles.avatarAndBag}>
@@ -295,24 +295,74 @@ const Header = () => {
         {/* Navegação só WEB */}
         <nav className={styles.desktopNav}>
           <ul className={styles.desktopNavList}>
-            {/* Joias → todas as joias disponíveis */}
             <li className={styles.desktopNavItem}>
-              <a href="/categoria/joias">Joias</a>
+              <a href="/categoria/joias">Todas as Joias</a>
             </li>
 
-            {/* Categorias específicas */}
-            <li className={styles.desktopNavItem}>
-              <a href="/categoria/pulseiras">Pulseiras</a>
-            </li>
             <li className={styles.desktopNavItem}>
               <a href="/categoria/aneis">Anéis</a>
             </li>
             <li className={styles.desktopNavItem}>
+              <a href="/categoria/colares">Colares</a>
+            </li>
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/chokers">Chokers</a>
+            </li>
+
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/pulseiras">Pulseiras</a>
+            </li>
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/pulseiras-minha-vida">Pulseiras Minha Vida</a>
+            </li>
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/braceletes">Braceletes</a>
+            </li>
+
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/escapularios">Escapulários</a>
+            </li>
+            <li className={styles.desktopNavItem}>
               <a href="/categoria/brincos">Brincos</a>
             </li>
+
+            {/* Pingentes */}
             <li className={styles.desktopNavItem}>
               <a href="/categoria/pingentes">Pingentes</a>
             </li>
+
+            {/* 🆕 Relógios Fem. Réplica (depois dos pingentes) */}
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/relogios-femininos-replica">
+                Relógios Fem. Réplica
+              </a>
+            </li>
+
+            {/* Masculinos */}
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/correntes-masculinas">
+                Correntes Masculinas
+              </a>
+            </li>
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/pulseiras-masculinas">
+                Pulseiras Masculinas
+              </a>
+            </li>
+
+            {/* 🆕 Pingentes masculinos (depois das pulseiras masculinas) */}
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/pingentes-masculinos">
+                Pingentes Masculinos
+              </a>
+            </li>
+
+            <li className={styles.desktopNavItem}>
+              <a href="/categoria/relogios-masculinos-replica">
+                Relógios Masc. Réplica
+              </a>
+            </li>
+
             <li className={styles.desktopNavItem}>
               <a href="#">Promoções</a>
             </li>
@@ -329,7 +379,7 @@ const Header = () => {
           >
             {/* Cabeçalho do menu */}
             <div className={styles.menuHeader}>
-              <span className={styles.menuLogo}>ANA PAULA PRATAS</span>
+              <span className={styles.menuLogo}>ANA PAULA PRATAS JOIAS</span>
               <button
                 type="button"
                 className={styles.menuCloseButton}
@@ -353,25 +403,15 @@ const Header = () => {
             {/* Navegação principal do menu */}
             <nav className={styles.menuNav}>
               <ul>
-                {/* Joias → todas as joias */}
                 <li>
                   <button
                     type="button"
                     onClick={() => handleMenuCategoriaClick('joias')}
                   >
-                    Joias
+                    Todas as Joias
                   </button>
                 </li>
 
-                {/* Categorias específicas */}
-                <li>
-                  <button
-                    type="button"
-                    onClick={() => handleMenuCategoriaClick('pulseiras')}
-                  >
-                    Pulseiras
-                  </button>
-                </li>
                 <li>
                   <button
                     type="button"
@@ -380,6 +420,63 @@ const Header = () => {
                     Anéis
                   </button>
                 </li>
+
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => handleMenuCategoriaClick('colares')}
+                  >
+                    Colares
+                  </button>
+                </li>
+
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => handleMenuCategoriaClick('chokers')}
+                  >
+                    Chokers
+                  </button>
+                </li>
+
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => handleMenuCategoriaClick('pulseiras')}
+                  >
+                    Pulseiras
+                  </button>
+                </li>
+
+                <li>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleMenuCategoriaClick('pulseiras-minha-vida')
+                    }
+                  >
+                    Pulseiras Minha Vida
+                  </button>
+                </li>
+
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => handleMenuCategoriaClick('braceletes')}
+                  >
+                    Braceletes
+                  </button>
+                </li>
+
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => handleMenuCategoriaClick('escapularios')}
+                  >
+                    Escapulários
+                  </button>
+                </li>
+
                 <li>
                   <button
                     type="button"
@@ -388,6 +485,8 @@ const Header = () => {
                     Brincos
                   </button>
                 </li>
+
+                {/* Pingentes */}
                 <li>
                   <button
                     type="button"
@@ -396,6 +495,65 @@ const Header = () => {
                     Pingentes
                   </button>
                 </li>
+
+                {/* 🆕 Relógios Fem. Réplica */}
+                <li>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleMenuCategoriaClick('relogios-femininos-replica')
+                    }
+                  >
+                    Relógios Fem. Réplica
+                  </button>
+                </li>
+
+                {/* Masculinos */}
+                <li>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleMenuCategoriaClick('correntes-masculinas')
+                    }
+                  >
+                    Correntes Masculinas
+                  </button>
+                </li>
+
+                <li>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleMenuCategoriaClick('pulseiras-masculinas')
+                    }
+                  >
+                    Pulseiras Masculinas
+                  </button>
+                </li>
+
+                {/* 🆕 Pingentes Masculinos */}
+                <li>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleMenuCategoriaClick('pingentes-masculinos')
+                    }
+                  >
+                    Pingentes Masculinos
+                  </button>
+                </li>
+
+                <li>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleMenuCategoriaClick('relogios-masculinos-replica')
+                    }
+                  >
+                    Relógios Masc. Réplica
+                  </button>
+                </li>
+
                 <li>
                   <button type="button">Promoções</button>
                 </li>
@@ -422,23 +580,15 @@ const Header = () => {
                 Meus Pedidos
               </button>
 
-              <button
-                type="button"
-                onClick={handleSobreClick}
-              >
+              <button type="button" onClick={handleSobreClick}>
                 Sobre nós
               </button>
 
-              <button
-                type="button"
-                onClick={handleContatoClick}
-              >
+              <button type="button" onClick={handleContatoClick}>
                 Contato
               </button>
 
-              <button type="button">
-                Informações
-              </button>
+              <button type="button">Informações</button>
 
               {/* 🔹 Seção ADMIN – só aparece para usuário admin */}
               {usuario && usuario.role === 'admin' && (
@@ -541,7 +691,8 @@ const Header = () => {
             <div className={styles.infoModalGroup}>
               <span className={styles.infoModalLabel}>Endereço</span>
               <p className={styles.infoModalText}>
-                R. Sete de Setembro, 38 - Centro, Araçoiaba da Serra - SP, 18190-000
+                R. Sete de Setembro, 38 - Centro, Araçoiaba da Serra - SP,
+                18190-000
               </p>
             </div>
           </div>
@@ -569,23 +720,25 @@ const Header = () => {
             <h3 className={styles.infoModalTitle}>Sobre nós</h3>
 
             <p className={styles.infoModalText}>
-              A <strong>ANA PAULA PRATAS</strong> é uma joalheria especializada em
-              prata e semijoias, com loja física em Araçoiaba da Serra desde <strong>2010</strong>.
+              A <strong>ANA PAULA PRATAS JOIAS</strong> é uma joalheria
+              especializada em prata, com loja física em Araçoiaba da Serra
+              desde <strong>2016</strong>.
             </p>
 
             <p className={styles.infoModalText}>
-              Cada peça é escolhida com cuidado para representar elegância, brilho e
-              momentos especiais da vida das nossas clientes.
+              Cada peça é escolhida com cuidado para representar elegância,
+              brilho e momentos especiais da vida das nossas clientes.
             </p>
 
             <p className={styles.infoModalText}>
-              Aqui você encontra atendimento próximo, joias com acabamento diferenciado
-              e todo o carinho de uma loja que cresceu junto com a cidade e com
-              suas histórias.
+              Aqui você encontra atendimento próximo, joias com acabamento
+              diferenciado e todo o carinho de uma loja que cresceu junto com a
+              cidade e com suas histórias.
             </p>
 
             <p className={styles.infoModalTextHighlight}>
-              Sinta-se em casa. Sua próxima joia favorita pode estar a um clique de distância. ✨
+              Sinta-se em casa. Sua próxima joia favorita pode estar a um clique
+              de distância. ✨
             </p>
           </div>
         </div>

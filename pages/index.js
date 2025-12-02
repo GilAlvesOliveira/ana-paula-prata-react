@@ -135,7 +135,7 @@ const Home = () => {
           />
         </div>
 
-        <h1 className={styles.title}>JOIAS DE PRATA</h1>
+        <h1 className={styles.title}>JOIAS EM PRATA 925</h1>
 
         <div className={styles.description}>
           Descubra a beleza atemporal das nossas joias de prata 925, perfeitas

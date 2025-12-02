@@ -27,7 +27,7 @@ const CategoriaPage = () => {
 
   const termoBusca = typeof q === 'string' ? q : '';
 
-  // Mapeia slug para um nome bonitinho para título
+  // Mapeia slug para um nome bonitinho para título/busca
   const getCategoriaNome = (s) => {
     switch (s) {
       case 'pulseiras':
@@ -40,6 +40,26 @@ const CategoriaPage = () => {
         return 'Pingentes';
       case 'joias':
         return 'Joias';
+      case 'colares':
+        return 'Colares';
+      case 'chokers':
+        return 'Chokers';
+      case 'pulseiras-minha-vida':
+        return 'Pulseiras Minha Vida';
+      case 'braceletes':
+        return 'Braceletes';
+      case 'escapularios':
+        return 'Escapulários';
+      case 'correntes-masculinas':
+        return 'Correntes Masculinas';
+      case 'pulseiras-masculinas':
+        return 'Pulseiras Masculinas';
+      case 'pingentes-masculinos':
+        return 'Pingentes Masculinos';
+      case 'relogios-femininos-replica':
+        return 'Relógios Femininos Réplica';
+      case 'relogios-masculinos-replica':
+        return 'Relógios Masculinos Réplica';
       case 'buscar':
         return 'Resultados da busca';
       default:
@@ -78,7 +98,7 @@ const CategoriaPage = () => {
             q: termo,
           });
         } else {
-          // Busca por categoria específica
+          // Busca por categoria específica (usa o nome bonitinho)
           lista = await buscarProdutosApi({
             q: categoriaNome,
           });
@@ -130,7 +150,10 @@ const CategoriaPage = () => {
       console.error('Erro ao adicionar ao carrinho:', e);
 
       if (e.status === 401) {
-        abrirModalCarrinho('Faça login para adicionar produtos ao carrinho.', false);
+        abrirModalCarrinho(
+          'Faça login para adicionar produtos ao carrinho.',
+          false
+        );
       } else {
         abrirModalCarrinho(
           e.message || 'Erro ao adicionar produto ao carrinho.',
@@ -210,7 +233,9 @@ const CategoriaPage = () => {
                   <article key={produto._id} className={styles.productCard}>
                     <div
                       className={styles.imageWrapper}
-                      onClick={() => produto.imagem && abrirImagem(produto.imagem)}
+                      onClick={() =>
+                        produto.imagem && abrirImagem(produto.imagem)
+                      }
                     >
                       {produto.imagem ? (
                         <img
